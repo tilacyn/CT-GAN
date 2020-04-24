@@ -66,7 +66,7 @@ class Extractor:
             coord = np.array([sample.coordZ, sample.coordY, sample.coordX])
             if not pd.isnull(sample.coordZ):
                 #job: (path to scan, coordinate, instance shape, coord system 'vox' or 'world')
-                J.append([os.path.join(self.src_dir, sample.seriesuid), coord, config['cube_shape'], self.coordSystem])
+                J.append([os.path.join(self.src_dir, str(int(sample.seriesuid))), coord, config['cube_shape'], self.coordSystem])
 
         print("extracting and augmenting samples...")
         if self.parallelize:
