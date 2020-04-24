@@ -63,10 +63,10 @@ class Extractor:
         print("preparing jobs...")
         J = [] #jobs
         for i, sample in self.coords.iterrows():
-            coord = np.array([sample.z, sample.y, sample.x])
-            if not pd.isnull(sample.z):
+            coord = np.array([sample.coordZ, sample.coordY, sample.coordX])
+            if not pd.isnull(sample.coordZ):
                 #job: (path to scan, coordinate, instance shape, coord system 'vox' or 'world')
-                J.append([os.path.join(self.src_dir,sample.filename), coord, config['cube_shape'], self.coordSystem])
+                J.append([os.path.join(self.src_dir, sample.seriesuid), coord, config['cube_shape'], self.coordSystem])
 
         print("extracting and augmenting samples...")
         if self.parallelize:
