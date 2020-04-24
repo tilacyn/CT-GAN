@@ -71,7 +71,7 @@ class Extractor:
             if not pd.isnull(sample.coordZ):
                 # job: (path to scan, coordinate, instance shape, coord system 'vox' or 'world')
 
-                J.append([os.path.join(self.src_dir, str(int(sample.seriesuid)).zfill(3)), coord, config['cube_shape'],
+                J.append([os.path.join(self.src_dir, '{}.raw'.format(str(int(sample.seriesuid)).zfill(3))), coord, config['cube_shape'],
                           self.coordSystem])
 
         print("extracting and augmenting samples...")
