@@ -27,18 +27,18 @@ os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"] = config['gpus']
 
 from utils.dataloader import DataLoader
-from keras.layers import Input, Dropout, Concatenate, Cropping3D
-from keras.layers import BatchNormalization
-from keras.layers.advanced_activations import LeakyReLU
-from keras.layers.convolutional import UpSampling3D, Conv3D
-from keras.models import Model
-from keras.optimizers import Adam
+from tensorflow.keras.layers import Input, Dropout, Concatenate, Cropping3D
+from tensorflow.keras.layers import BatchNormalization
+from tensorflow.keras.layers import LeakyReLU
+from tensorflow.keras.layers import UpSampling3D, Conv3D
+from tensorflow.keras.models import Model
+from tensorflow.keras.optimizers import Adam
 import matplotlib.pyplot as plt
 import datetime
 import numpy as np
 
 import tensorflow as tf
-import keras.backend.tensorflow_backend as ktf
+import tensorflow.keras.backend as ktf
 
 
 def get_session():

@@ -58,6 +58,7 @@ class Extractor:
             self.coords = pd.read_csv(coords_csv_path) if coords_csv_path is not None else pd.read_csv(config['unhealthy_coords'])
 
     def extract(self,plot=True):
+        #
         # Prep jobs (one per coordinate)
         print("preparing jobs...")
         J = [] #jobs
