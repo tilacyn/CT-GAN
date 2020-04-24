@@ -68,7 +68,7 @@ class Extractor:
         J = []  # jobs
         for i, sample in self.coords.iterrows():
             coord = np.array([sample.coordZ, sample.coordY, sample.coordX])
-            path_to_file = os.path.join(self.src_dir, '{}.raw'.format(str(int(sample.seriesuid)).zfill(3)))
+            path_to_file = os.path.join(self.src_dir, '{}.mhd'.format(str(int(sample.seriesuid)).zfill(3)))
             if not pd.isnull(sample.coordZ) and os.path.exists(path_to_file):
                 # job: (path to scan, coordinate, instance shape, coord system 'vox' or 'world')
 
