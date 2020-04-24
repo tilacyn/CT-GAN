@@ -81,9 +81,9 @@ class Extractor:
         else:
             X = []
             for job in J:
-                try:
+                # try:
                     X.append(self._processJob(job))
-                except:
+                # except:
                     print("Failed to process sample")
         instances = np.array(
             list(itertools.chain.from_iterable(X)))  # each job creates a batch of augmented instances: so collect hem
