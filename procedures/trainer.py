@@ -46,7 +46,7 @@ def get_session():
     return tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
 
 
-ktf.set_session(get_session())
+# ktf.set_session(get_session())
 
 
 class Trainer:
