@@ -39,6 +39,7 @@ import numpy as np
 
 import tensorflow as tf
 import tensorflow.keras.backend as ktf
+import keras.backend.tensorflow_backend as ktf
 
 
 def get_session():
@@ -46,8 +47,8 @@ def get_session():
     return tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
 
 
-# ktf.set_session(get_session())
-
+ktf.set_session(get_session())
+# tf.Session
 
 class Trainer:
     def __init__(self, isInjector=True):
@@ -123,6 +124,8 @@ class Trainer:
         def get_crop_shape(target, refer):
 
             # depth, the 4rth dimension
+            print(target.shape)
+            print(refer.shape)
             cd = (target.get_shape()[3] - refer.get_shape()[3]).value
             assert (cd >= 0)
             if cd % 2 != 0:
