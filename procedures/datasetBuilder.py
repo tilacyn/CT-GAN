@@ -71,9 +71,8 @@ class Extractor:
             path_to_file = os.path.join(self.src_dir, '{}.mhd'.format(str(int(sample.seriesuid)).zfill(3)))
             if not pd.isnull(sample.coordZ) and os.path.exists(path_to_file):
                 # job: (path to scan, coordinate, instance shape, coord system 'vox' or 'world')
-                if np.random.randint(0, 20) == 3:
-                    J.append([path_to_file, coord, config['cube_shape'],
-                              self.coordSystem])
+                J.append([path_to_file, coord, config['cube_shape'],
+                          self.coordSystem])
 
         print("extracting and augmenting samples...")
         if self.parallelize:
