@@ -43,11 +43,11 @@ import keras.backend.tensorflow_backend as ktf
 
 
 def get_session():
-    gpu_options = tf.GPUOptions(allow_growth=True)
-    return tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
+    gpu_options = tf.compat.v1.GPUOptions(allow_growth=True)
+    return tf.compat.v1.Session(config=tf.compat.v1.ConfigProto(gpu_options=gpu_options))
 
 
-ktf.set_session(get_session())
+tf.compat.v1.keras.backend.set_session(get_session())
 # tf.Session
 
 class Trainer:
