@@ -73,7 +73,7 @@ class Extractor:
                 # job: (path to scan, coordinate, instance shape, coord system 'vox' or 'world')
                 J.append([path_to_file, coord, config['cube_shape'],
                           self.coordSystem])
-        J = J[:30]
+        # J = J[:30]
 
         subset_number = 5
         subset_len = len(J) // subset_number + 1
