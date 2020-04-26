@@ -61,6 +61,13 @@ class Extractor:
             self.coords = pd.read_csv(coords_csv_path) if coords_csv_path is not None else pd.read_csv(
                 config['unhealthy_coords'])
 
+    def generate_x(self, J):
+        for job in J[:10]:
+            try:
+                yield self._processJob(job)
+            except:
+                print("Failed to process sample")
+
     def extract(self, plot=True):
         #
         # Prep jobs (one per coordinate)
@@ -75,40 +82,45 @@ class Extractor:
                           self.coordSystem])
 
         print("extracting and augmenting samples...")
-        if self.parallelize:
-            num_cores = int(np.ceil(min(np.ceil(multiprocessing.cpu_count() * 0.75), len(J))))
-            X = Parallel(n_jobs=num_cores)(delayed(self._processJob)(j) for j in J)
-        else:
-            X = []
-            for job in J:
-                try:
-                    X.append(self._processJob(job))
-                except:
-                    print("Failed to process sample")
-        instances = np.array(
-            list(itertools.chain.from_iterable(X)))  # each job creates a batch of augmented instances: so collect hem
+        # if self.parallelize:
+        #     num_cores = int(np.ceil(min(np.ceil(multiprocessing.cpu_count() * 0.75), len(J))))
+        #     X = Parallel(n_jobs=num_cores)(delayed(self._processJob)(j) for j in J)
+        # else:
+        generator = self.generate_x(J)
+        for i in range(len(J))[:15]:
+            instance = next(generator)
+            if instance is None:
+                break
+            instance = self.preprocess(instance, i)
+            np.save(os.path.join(self.dst_path, i), instance)
 
+        # instances = np.array(
+        #     list(itertools.chain.from_iterable(X)))  # each job creates a batch of augmented instances: so collect hem
+        #
+        #
+        # if plot:
+        #     self.plot_sample(instances)
+        #
+        # print("saving the dataset")
+        # np.save(self.dst_path, instances)
+
+    def preprocess(self, instance, i):
         # Histogram Equalization:
         print("equalizing the data...")
-        eq = histEq(instances)
-        instances = eq.equalize(instances)
+        eq = histEq(instance)
+        instance = eq.equalize(instance)
         os.makedirs(self.norm_save_dir, exist_ok=True)
-        eq.save(path=os.path.join(self.norm_save_dir, 'equalization.pkl'))
+        eq.save(path=os.path.join(self.norm_save_dir, 'equalization_{}.pkl'.format(i)))
 
         # -1 1 Normalization
         print("normalizing the data...")
-        min_v = np.min(instances)
-        max_v = np.max(instances)
-        mean_v = np.mean(instances)
+        min_v = np.min(instance)
+        max_v = np.max(instance)
+        mean_v = np.mean(instance)
         norm_data = np.array([mean_v, min_v, max_v])
-        instances = (instances - mean_v) / (max_v - min_v)
-        np.save(os.path.join(self.norm_save_dir, 'normalization.npy'), norm_data)
-
-        if plot:
-            self.plot_sample(instances)
-
-        print("saving the dataset")
-        np.save(self.dst_path, instances)
+        instance = (instance - mean_v) / (max_v - min_v)
+        np.save(os.path.join(self.norm_save_dir, 'normalization_{}.npy'.format(i)), norm_data)
+        return instance
 
     def _processJob(self, args):
         print("Working on job: " + args[0] + "   " + args[3] + " coord (zyx): ", args[1])
