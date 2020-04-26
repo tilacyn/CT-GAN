@@ -16,7 +16,7 @@ config['unhealthy_scans_raw'] = "data/unhealthy_scans/"  # path to directory whe
 config[
     'unhealthy_coords'] = "data/unhealthy_coords.csv"  # path to csv where each row indicates where a healthy sample is (format: filename, x, y ,z)
 config[
-    'unhealthy_samples'] = "data/unhealthy_samples.npy"  # path to pickle dump of processed healthy samples for training.
+    'unhealthy_samples'] = "data/unhealthy_samples"  # path to pickle dump of processed healthy samples for training.
 
 config[
     'traindata_coordSystem'] = "world"  # the coord system used to note the locations of the evidence ('world' or 'vox'). vox is array index.
