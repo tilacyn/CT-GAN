@@ -93,7 +93,7 @@ class Extractor:
                 break
             instance = np.array(instance)
             instance = self.preprocess(instance, i)
-            np.save(os.path.join(self.dst_path, i), instance)
+            np.save(os.path.join(self.dst_path, str(i)), instance)
 
         # instances = np.array(
         #     list(itertools.chain.from_iterable(X)))  # each job creates a batch of augmented instances: so collect hem

@@ -30,7 +30,7 @@ class DataLoader():
         # np.random.shuffle(self.data_train)
 
     def load_image(self, i):
-        image = np.load(os.path.join(self.dataset_path, i))
+        image = np.load(os.path.join(self.dataset_path, str(i)))
         image = image.reshape((self.img_res[0], self.img_res[1], self.img_res[2], 1))
         return image
 
