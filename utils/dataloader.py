@@ -64,7 +64,7 @@ class SegmentedDataLoader():
         self.img_res = img_res
 
     def load_batch(self, batch_size):
-        self.n_batches = int(len(self.data_len) / batch_size)
+        self.n_batches = int(self.data_len / batch_size)
         for i in range(self.subset_number):
             cur_loader = DataLoader(os.path.join('data', 'unhealthy_samples_{}.npy'.format(i)), img_res=self.img_res)
             cur_loader.load_batch(batch_size)
