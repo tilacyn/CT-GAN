@@ -91,6 +91,7 @@ class Extractor:
             instance = next(generator)
             if instance is None:
                 break
+            instance = np.array(instance)
             instance = self.preprocess(instance, i)
             np.save(os.path.join(self.dst_path, i), instance)
 
