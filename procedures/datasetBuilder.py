@@ -87,10 +87,7 @@ class Extractor:
         #     X = Parallel(n_jobs=num_cores)(delayed(self._processJob)(j) for j in J)
         # else:
         generator = self.generate_x(J)
-        for i in range(len(J))[:15]:
-            instance = next(generator)
-            if instance is None:
-                break
+        for instance in generator:
             instance = np.array(instance)
             instance = self.preprocess(instance, i)
             np.save(os.path.join(self.dst_path, str(i)), instance)
