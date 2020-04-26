@@ -51,7 +51,7 @@ class DataLoader():
         return np.array(imgs_A), np.array(imgs_B)
 
     def load_batch(self, batch_size=1, is_testing=False):
-        self.n_batches = int(len(self.data_train) / batch_size)
+        self.n_batches = int(self.data_len / batch_size)
 
         for i in range(self.n_batches - 1):
             idx = self.indices[i * batch_size:(i + 1) * batch_size]
