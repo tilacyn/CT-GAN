@@ -114,6 +114,7 @@ class Extractor:
 
         print("saving the dataset")
         np.save(self.dst_path + '_{}.npy'.format(subset_i), instances)
+        return len(instances)
 
     def _processJob(self, args):
         print("Working on job: " + args[0] + "   " + args[3] + " coord (zyx): ", args[1])
