@@ -69,10 +69,12 @@ class Extractor:
         for i, sample in self.coords.iterrows():
             coord = np.array([sample.coordZ, sample.coordY, sample.coordX])
             path_to_file = os.path.join(self.src_dir, '{}.mhd'.format(str(int(sample.seriesuid)).zfill(3)))
-            if not pd.isnull(sample.coordZ) and os.path.exists(path_to_file):
+            if not pd.isnull(sample.coordZ) and os.path.exists(path_to_file) and sample.diameter_mm > 10 and sample.diameter_mm < 16:
+                print('diameter: {}'.format(sample.diameter_mm))
                 # job: (path to scan, coordinate, instance shape, coord system 'vox' or 'world')
                 J.append([path_to_file, coord, config['cube_shape'],
                           self.coordSystem])
+        print(len(J))
         # J = J[:30]
 
         subset_number = 5

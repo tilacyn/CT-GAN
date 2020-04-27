@@ -25,7 +25,7 @@ class DataLoader():
         # shuffle
         np.random.shuffle(self.data_train)
 
-    def load_data(self, batch_size=1, is_testing=False):
+    def load_data(self, batch_size=1):
         idx = np.random.permutation(len(self.data_train))
         batch_images = self.data_train[idx[:batch_size]]
         imgs_A = []
@@ -66,5 +66,8 @@ class SegmentedDataLoader():
     def load_batch(self, batch_size):
         self.n_batches = int(self.data_len / batch_size)
         for i in range(self.subset_number):
-            cur_loader = DataLoader(os.path.join('data', 'unhealthy_samples_{}.npy'.format(i)), img_res=self.img_res)
-            yield from cur_loader.load_batch(batch_size)
+            self.cur_loader = DataLoader(os.path.join('data', 'unhealthy_samples_{}.npy'.format(i)), img_res=self.img_res)
+            yield from self.cur_loader.load_batch(batch_size)
+
+    def load_data(self, batch_size=1):
+        return self.cur_loader.load_data(batch_size)

@@ -257,8 +257,8 @@ class Trainer:
                                                                                                       elapsed_time))
 
                 # If at save interval => save generated image samples
-                # if batch_i % sample_interval == 0:
-                #     self.show_progress(epoch, batch_i)
+                if batch_i % sample_interval == 0:
+                    self.show_progress(epoch, batch_i)
 
     def show_progress(self, epoch, batch_i):
         filename = "%d_%d.png" % (epoch, batch_i)
