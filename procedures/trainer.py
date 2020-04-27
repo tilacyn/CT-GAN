@@ -51,10 +51,13 @@ tf.compat.v1.keras.backend.set_session(get_session())
 # tf.Session
 
 class Trainer:
-    def __init__(self, isInjector=True):
+    def __init__(self, isInjector=True, savepath='default', d_lr, combined_lr):
         self.isInjector = isInjector
+        self.savepath = savepath
         # Input shape
         cube_shape = config['cube_shape']
+        self.d_lr = d_lr
+        self.combined_lr = combined_lr
         self.img_rows = config['cube_shape'][1]
         self.img_cols = config['cube_shape'][2]
         self.img_depth = config['cube_shape'][0]
@@ -81,8 +84,8 @@ class Trainer:
         self.gf = 100
         self.df = 100
 
-        optimizer = Adam(0.0002, 0.5)
-        optimizer_G = Adam(0.001, 0.5)
+        optimizer = Adam(self.combined_lr, 0.5)
+        optimizer_G = Adam(self.d_lr, 0.5)
 
         # Build and compile the discriminator
         self.discriminator = self.build_discriminator()
@@ -263,7 +266,7 @@ class Trainer:
     def show_progress(self, epoch, batch_i):
         filename = "%d_%d.png" % (epoch, batch_i)
         if self.isInjector:
-            savepath = os.path.join(config['progress'], "injector")
+            savepath = os.path.join(config['progress'], "injector", self.savepath)
         else:
             savepath = os.path.join(config['progress'], "remover")
         os.makedirs(savepath, exist_ok=True)
