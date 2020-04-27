@@ -51,7 +51,7 @@ tf.compat.v1.keras.backend.set_session(get_session())
 # tf.Session
 
 class Trainer:
-    def __init__(self, isInjector=True, savepath='default', d_lr, combined_lr):
+    def __init__(self, isInjector=True, savepath='default', d_lr=0.0002, combined_lr=0.00001):
         self.isInjector = isInjector
         self.savepath = savepath
         # Input shape
