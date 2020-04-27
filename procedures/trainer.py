@@ -82,7 +82,7 @@ class Trainer:
         self.df = 100
 
         optimizer = Adam(0.0002, 0.5)
-        optimizer_G = Adam(0.000001, 0.5)
+        optimizer_G = Adam(0.001, 0.5)
 
         # Build and compile the discriminator
         self.discriminator = self.build_discriminator()
