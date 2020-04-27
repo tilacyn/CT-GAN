@@ -269,7 +269,7 @@ class Trainer:
         os.makedirs(savepath, exist_ok=True)
         r, c = 3, 3
 
-        imgs_A, imgs_B = self.dataloader.load_data(batch_size=3, is_testing=True)
+        imgs_A, imgs_B = self.dataloader.load_data(batch_size=3)
         fake_A = self.generator.predict([imgs_B])
 
         gen_imgs = np.concatenate([imgs_B, fake_A, imgs_A])
