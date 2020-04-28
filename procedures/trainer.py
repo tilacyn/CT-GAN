@@ -51,7 +51,7 @@ tf.compat.v1.keras.backend.set_session(get_session())
 # tf.Session
 
 class Trainer:
-    def __init__(self, isInjector=True, savepath='default', d_lr=0.0002, combined_lr=0.00001):
+    def __init__(self, isInjector=True, savepath='default', d_lr=0.0002, combined_lr=0.00001, modelpath=None):
         self.isInjector = isInjector
         self.savepath = savepath
         # Input shape
@@ -69,6 +69,8 @@ class Trainer:
         if self.isInjector:
             self.dataset_path = config['unhealthy_samples']
             self.modelpath = config['modelpath_inject']
+            if modelpath is not None:
+                self.modelpath = os.path.join(self.modelpath, modelpath)
         else:
             self.dataset_path = config['healthy_samples']
             self.modelpath = config['modelpath_remove']
@@ -239,9 +241,12 @@ class Trainer:
                 fake_A = self.generator.predict([imgs_B])
 
                 # Train the discriminators (original images = real / generated = Fake)
-                d_loss_real = self.discriminator.train_on_batch([imgs_A, imgs_B], valid)
-                d_loss_fake = self.discriminator.train_on_batch([fake_A, imgs_B], fake)
-                d_loss = 0.5 * np.add(d_loss_real, d_loss_fake)
+                if epoch % 2 == 0:
+                    d_loss_real = self.discriminator.train_on_batch([imgs_A, imgs_B], valid)
+                    d_loss_fake = self.discriminator.train_on_batch([fake_A, imgs_B], fake)
+                    d_loss = 0.5 * np.add(d_loss_real, d_loss_fake)
+                else:
+                    d_loss = [0, 0]
 
                 # -----------------
                 #  Train Generator
