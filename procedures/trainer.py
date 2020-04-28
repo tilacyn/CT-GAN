@@ -71,6 +71,8 @@ class Trainer:
             self.modelpath = config['modelpath_inject']
             if modelpath is not None:
                 self.modelpath = os.path.join(self.modelpath, modelpath)
+            if not os.path.exists(self.modelpath):
+                os.makedirs(self.modelpath)
         else:
             self.dataset_path = config['healthy_samples']
             self.modelpath = config['modelpath_remove']
