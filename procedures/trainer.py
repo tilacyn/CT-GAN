@@ -51,7 +51,8 @@ tf.compat.v1.keras.backend.set_session(get_session())
 # tf.Session
 
 class Trainer:
-    def __init__(self, isInjector=True, savepath='default', d_lr=0.0002, combined_lr=0.00001, modelpath=None):
+    def __init__(self, isInjector=True, savepath='default', d_lr=0.0002, combined_lr=0.00001, modelpath=None, generator_weight_updates=1):
+        self.generator_weight_updates = generator_weight_updates
         self.isInjector = isInjector
         self.savepath = savepath
         # Input shape
@@ -255,7 +256,7 @@ class Trainer:
                 # -----------------
 
                 # Train the generators
-                for i in range(5):
+                for i in range(self.generator_weight_updates):
                     g_loss = self.combined.train_on_batch([imgs_A, imgs_B], [valid, imgs_A])
                 elapsed_time = datetime.datetime.now() - start_time
                 # Plot the progress
