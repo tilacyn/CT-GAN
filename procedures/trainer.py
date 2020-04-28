@@ -243,19 +243,20 @@ class Trainer:
                 fake_A = self.generator.predict([imgs_B])
 
                 # Train the discriminators (original images = real / generated = Fake)
-                if epoch % 2 == 0:
-                    d_loss_real = self.discriminator.train_on_batch([imgs_A, imgs_B], valid)
-                    d_loss_fake = self.discriminator.train_on_batch([fake_A, imgs_B], fake)
-                    d_loss = 0.5 * np.add(d_loss_real, d_loss_fake)
-                else:
-                    d_loss = [0, 0]
+                # if epoch % 2 == 0:
+                d_loss_real = self.discriminator.train_on_batch([imgs_A, imgs_B], valid)
+                d_loss_fake = self.discriminator.train_on_batch([fake_A, imgs_B], fake)
+                d_loss = 0.5 * np.add(d_loss_real, d_loss_fake)
+                # else:
+                #     d_loss = [0, 0]
 
                 # -----------------
                 #  Train Generator
                 # -----------------
 
                 # Train the generators
-                g_loss = self.combined.train_on_batch([imgs_A, imgs_B], [valid, imgs_A])
+                for i in range(5):
+                    g_loss = self.combined.train_on_batch([imgs_A, imgs_B], [valid, imgs_A])
                 elapsed_time = datetime.datetime.now() - start_time
                 # Plot the progress
                 print("[Epoch %d/%d] [Batch %d/%d] [D loss: %f, acc: %3d%%] [G loss: %f] time: %s" % (epoch, epochs,
