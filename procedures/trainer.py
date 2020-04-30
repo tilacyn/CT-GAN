@@ -138,7 +138,7 @@ class Trainer:
 
         def adain(xgb):
             x = xgb[0]
-            print('shape before adain: ' + x.shape)
+            print('shape before adain: ' + x)
             g = xgb[1]
             b = xgb[2]
             mean = ktf.mean(x, axis=[0, 1], keepdims=True)
