@@ -146,7 +146,7 @@ class Trainer:
             y = (x - mean) / std
 
             # Reshape gamma and beta
-            pool_shape = [-1, 8, 8, 8, y.shape[-1]]
+            pool_shape = [-1, 1, 1, 1, y.shape[-1]]
             print(g.shape)
             print(b.shape)
             g = ktf.reshape(g, pool_shape)
@@ -190,8 +190,8 @@ class Trainer:
         def conv3d(layer_input, filters, f_size=4, bn=True):
             """Layers used during downsampling"""
             if self.adain:
-                g = Dense(filters, bias_initializer='ones')(layer_input)
-                b = Dense(filters)(layer_input)
+                g = Dense(filters, bias_initializer='ones')(w)
+                b = Dense(filters)(w)
             d = Conv3D(filters, kernel_size=f_size, strides=2, padding='same')(layer_input)
             d = LeakyReLU(alpha=0.2)(d)
             if self.adain and bn:
@@ -216,6 +216,9 @@ class Trainer:
 
         # Image input
         d0 = Input(shape=self.img_shape, name="input_image")
+
+        w = Dense(128, activation='relu')(d0)
+        w = Dense(128, activation='relu')(w)
 
         # Downsampling
         d1 = conv3d(d0, self.gf, bn=False)
