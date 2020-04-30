@@ -138,6 +138,7 @@ class Trainer:
 
         def adain(xgb):
             x = xgb[0]
+            print('shape before adain: ' + x.shape)
             g = xgb[1]
             b = xgb[2]
             mean = ktf.mean(x, axis=[0, 1], keepdims=True)
@@ -155,7 +156,9 @@ class Trainer:
             print(b.shape)
 
             # Multiply by x[1] (GAMMA) and add x[2] (BETA)
-            return y * g + b
+            result = y * g + b
+            print('shape after adain: ' + result.shape)
+            return result
 
         def get_crop_shape(target, refer):
             # depth, the 4rth dimension
@@ -192,9 +195,7 @@ class Trainer:
             d = Conv3D(filters, kernel_size=f_size, strides=2, padding='same')(layer_input)
             d = LeakyReLU(alpha=0.2)(d)
             if self.adain and bn:
-                print('shape before adain: ' + d.shape)
                 d = Lambda(adain)([d, g, b])
-                print('shape after adain: ' + d.shape)
             elif bn:
                 d = BatchNormalization(momentum=0.8)(d)
             return d
