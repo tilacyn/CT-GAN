@@ -219,7 +219,9 @@ class Trainer:
 
         print('input shape')
         print(d0.shape)
-        w = Dense(128, activation='relu')(d0[:, 0, 0, 0, 0])
+        w = d0[:, 0, 0, 0, 0]
+        w = ktf.expand_dims(w, 0)
+        w = Dense(128, activation='relu')()
         w = Dense(128, activation='relu')(w)
 
         # Downsampling
