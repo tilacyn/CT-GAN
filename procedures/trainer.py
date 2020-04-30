@@ -31,7 +31,7 @@ from utils.dataloader import DataLoader, SegmentedDataLoader
 from tensorflow.keras.layers import Input, Dropout, Concatenate, Cropping3D
 from tensorflow.keras.layers import BatchNormalization
 from tensorflow.keras.layers import LeakyReLU
-from tensorflow.keras.layers import UpSampling3D, Conv3D, Dense, Lambda
+from tensorflow.keras.layers import UpSampling3D, Conv3D, Dense, Lambda, Flatten
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
 import matplotlib.pyplot as plt
@@ -219,8 +219,7 @@ class Trainer:
 
         print('input shape')
         print(d0.shape)
-        w = d0[:, 0, 0, 0, 0]
-        w = ktf.expand_dims(w, 0)
+        w = Flatten(d0)
         w = Dense(128, activation='relu')(w)
         w = Dense(128, activation='relu')(w)
 
