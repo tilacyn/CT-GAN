@@ -204,7 +204,7 @@ class Trainer:
             u = UpSampling3D(size=2)(layer_input)
             u = Conv3D(filters, kernel_size=f_size, strides=1, padding='same', activation='relu')(u)
             if dropout_rate:
-                u = Dropout(dropout_rate)()
+                u = Dropout(dropout_rate)(u)
             if self.adain:
                 g = Dense(filters, bias_initializer='ones')(w)
                 b = Dense(filters)(w)
