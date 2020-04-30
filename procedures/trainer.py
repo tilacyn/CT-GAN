@@ -30,7 +30,7 @@ from utils.dataloader import DataLoader, SegmentedDataLoader
 from tensorflow.keras.layers import Input, Dropout, Concatenate, Cropping3D
 from tensorflow.keras.layers import BatchNormalization
 from tensorflow.keras.layers import LeakyReLU
-from tensorflow.keras.layers import UpSampling3D, Conv3D
+from tensorflow.keras.layers import UpSampling3D, Conv3D, Dense, Lambda
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
 import matplotlib.pyplot as plt
@@ -39,7 +39,7 @@ import numpy as np
 
 import tensorflow as tf
 import tensorflow.keras.backend as ktf
-import keras.backend.tensorflow_backend as ktf
+# import keras.backend.tensorflow_backend as ktf
 
 
 def get_session():
@@ -51,10 +51,11 @@ tf.compat.v1.keras.backend.set_session(get_session())
 # tf.Session
 
 class Trainer:
-    def __init__(self, isInjector=True, savepath='default', d_lr=0.0002, combined_lr=0.00001, modelpath=None, generator_weight_updates=1):
+    def __init__(self, isInjector=True, savepath='default', d_lr=0.0002, combined_lr=0.00001, modelpath=None, generator_weight_updates=1, adain=False):
         self.generator_weight_updates = generator_weight_updates
         self.isInjector = isInjector
         self.savepath = savepath
+        self.adain = adain
         # Input shape
         cube_shape = config['cube_shape']
         self.d_lr = d_lr
@@ -129,6 +130,24 @@ class Trainer:
     def build_generator(self):
         """U-Net Generator"""
 
+        def adain(x, g, b):
+                mean = ktf.mean(x, axis=[0, 1], keepdims=True)
+                std = ktf.std(x, axis=[0, 1], keepdims=True) + 1e-7
+                y = (x - mean) / std
+
+                # Reshape gamma and beta
+                pool_shape = [-1, 1, 1, y.shape[-1]]
+                g = ktf.reshape(g, pool_shape)
+                b = ktf.reshape(b, pool_shape)
+
+                print('adain')
+                print(y.shape)
+                print(g.shape)
+                print(b.shape)
+
+                # Multiply by x[1] (GAMMA) and add x[2] (BETA)
+                return y * g + b
+
         def get_crop_shape(target, refer):
             # depth, the 4rth dimension
             print(target.shape)
@@ -158,9 +177,14 @@ class Trainer:
 
         def conv3d(layer_input, filters, f_size=4, bn=True):
             """Layers used during downsampling"""
+            if self.adain:
+                g = Dense(32, bias_initializer='ones')(layer_input)
+                b = Dense(32)(layer_input)
             d = Conv3D(filters, kernel_size=f_size, strides=2, padding='same')(layer_input)
             d = LeakyReLU(alpha=0.2)(d)
-            if bn:
+            if self.adain:
+                d = Lambda(adain)(d, g, b)
+            elif bn:
                 d = BatchNormalization(momentum=0.8)(d)
             return d
 
