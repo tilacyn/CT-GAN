@@ -190,8 +190,8 @@ class Trainer:
         def conv3d(layer_input, filters, f_size=4, bn=True):
             """Layers used during downsampling"""
             if self.adain:
-                g = Dense(32, bias_initializer='ones')(layer_input)
-                b = Dense(32)(layer_input)
+                g = Dense(filters, bias_initializer='ones')(layer_input)
+                b = Dense(filters)(layer_input)
             d = Conv3D(filters, kernel_size=f_size, strides=2, padding='same')(layer_input)
             d = LeakyReLU(alpha=0.2)(d)
             if self.adain and bn:
