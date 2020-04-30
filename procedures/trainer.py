@@ -147,13 +147,13 @@ class Trainer:
 
             # Reshape gamma and beta
             pool_shape = [-1, 1, 1, 1, y.shape[-1]]
+            print(g.shape)
+            print(b.shape)
             g = ktf.reshape(g, pool_shape)
             b = ktf.reshape(b, pool_shape)
 
             print('adain')
             print(y.shape)
-            print(g.shape)
-            print(b.shape)
 
             # Multiply by x[1] (GAMMA) and add x[2] (BETA)
             result = y * g + b
