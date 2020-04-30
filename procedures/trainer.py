@@ -219,7 +219,7 @@ class Trainer:
 
         print('input shape')
         print(d0.shape)
-        w = Flatten(d0)
+        w = Flatten()(d0)
         w = Dense(128, activation='relu')(w)
         w = Dense(128, activation='relu')(w)
 
