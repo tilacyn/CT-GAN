@@ -189,12 +189,11 @@ class Trainer:
 
         def conv3d(layer_input, filters, f_size=4, bn=True):
             """Layers used during downsampling"""
-            if self.adain:
-                g = Dense(filters, bias_initializer='ones')(w)
-                b = Dense(filters)(w)
             d = Conv3D(filters, kernel_size=f_size, strides=2, padding='same')(layer_input)
             d = LeakyReLU(alpha=0.2)(d)
             if self.adain and bn:
+                g = Dense(filters, bias_initializer='ones')(w)
+                b = Dense(filters)(w)
                 d = Lambda(adain)([d, g, b])
             elif bn:
                 d = BatchNormalization(momentum=0.8)(d)
@@ -205,8 +204,13 @@ class Trainer:
             u = UpSampling3D(size=2)(layer_input)
             u = Conv3D(filters, kernel_size=f_size, strides=1, padding='same', activation='relu')(u)
             if dropout_rate:
-                u = Dropout(dropout_rate)(u)
-            u = BatchNormalization(momentum=0.8)(u)
+                g = Dense(filters, bias_initializer='ones')(w)
+                b = Dense(filters)(w)
+                u = Dropout(dropout_rate)([u, g, b])
+            if self.adain:
+                u = Lambda(adain)()
+            else:
+                u = BatchNormalization(momentum=0.8)(u)
 
             # u = Concatenate()([u, skip_input])
             ch, cw, cd = get_crop_shape(u, skip_input)
