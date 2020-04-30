@@ -204,11 +204,11 @@ class Trainer:
             u = UpSampling3D(size=2)(layer_input)
             u = Conv3D(filters, kernel_size=f_size, strides=1, padding='same', activation='relu')(u)
             if dropout_rate:
+                u = Dropout(dropout_rate)()
+            if self.adain:
                 g = Dense(filters, bias_initializer='ones')(w)
                 b = Dense(filters)(w)
-                u = Dropout(dropout_rate)([u, g, b])
-            if self.adain:
-                u = Lambda(adain)()
+                u = Lambda(adain)([u, g, b])
             else:
                 u = BatchNormalization(momentum=0.8)(u)
 
