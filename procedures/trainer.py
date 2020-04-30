@@ -217,7 +217,9 @@ class Trainer:
         # Image input
         d0 = Input(shape=self.img_shape, name="input_image")
 
-        w = Dense(128, activation='relu')(d0[:][0][0][0])
+        print('input shape')
+        print(d0.shape)
+        w = Dense(128, activation='relu')(d0[:, 0, 0, 0, 0])
         w = Dense(128, activation='relu')(w)
 
         # Downsampling
