@@ -23,6 +23,7 @@
 from __future__ import print_function, division
 from config import *  # user configuration in config.py
 import os
+
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"] = config['gpus']
 
@@ -39,6 +40,8 @@ import numpy as np
 
 import tensorflow as tf
 import tensorflow.keras.backend as ktf
+
+
 # import keras.backend.tensorflow_backend as ktf
 
 
@@ -48,10 +51,13 @@ def get_session():
 
 
 tf.compat.v1.keras.backend.set_session(get_session())
+
+
 # tf.Session
 
 class Trainer:
-    def __init__(self, isInjector=True, savepath='default', d_lr=0.0002, combined_lr=0.00001, modelpath=None, generator_weight_updates=1, adain=False):
+    def __init__(self, isInjector=True, savepath='default', d_lr=0.0002, combined_lr=0.00001, modelpath=None,
+                 generator_weight_updates=1, adain=False):
         self.generator_weight_updates = generator_weight_updates
         self.isInjector = isInjector
         self.savepath = savepath
@@ -80,7 +86,7 @@ class Trainer:
             self.modelpath = config['modelpath_remove']
 
         self.dataloader = SegmentedDataLoader(subset_number=5,
-                                     img_res=(self.img_rows, self.img_cols, self.img_depth))
+                                              img_res=(self.img_rows, self.img_cols, self.img_depth))
 
         # Calculate output shape of D (PatchGAN)
         patch = int(self.img_rows / 2 ** 4)
@@ -130,43 +136,46 @@ class Trainer:
     def build_generator(self):
         """U-Net Generator"""
 
-        def adain(x, g, b):
-                mean = ktf.mean(x, axis=[0, 1], keepdims=True)
-                std = ktf.std(x, axis=[0, 1], keepdims=True) + 1e-7
-                y = (x - mean) / std
+        def adain(xgb):
+            x = xgb[0]
+            g = xgb[1]
+            b = xgb[2]
+            mean = ktf.mean(x, axis=[0, 1], keepdims=True)
+            std = ktf.std(x, axis=[0, 1], keepdims=True) + 1e-7
+            y = (x - mean) / std
 
-                # Reshape gamma and beta
-                pool_shape = [-1, 1, 1, y.shape[-1]]
-                g = ktf.reshape(g, pool_shape)
-                b = ktf.reshape(b, pool_shape)
+            # Reshape gamma and beta
+            pool_shape = [-1, 1, 1, y.shape[-1]]
+            g = ktf.reshape(g, pool_shape)
+            b = ktf.reshape(b, pool_shape)
 
-                print('adain')
-                print(y.shape)
-                print(g.shape)
-                print(b.shape)
+            print('adain')
+            print(y.shape)
+            print(g.shape)
+            print(b.shape)
 
-                # Multiply by x[1] (GAMMA) and add x[2] (BETA)
-                return y * g + b
+            # Multiply by x[1] (GAMMA) and add x[2] (BETA)
+            return y * g + b
 
         def get_crop_shape(target, refer):
             # depth, the 4rth dimension
             print(target.shape)
             print(refer.shape)
-            cd = (target.get_shape()[3] - refer.get_shape()[3])#.value
+            cd = (target.get_shape()[3] - refer.get_shape()[3])  # .value
             assert (cd >= 0)
             if cd % 2 != 0:
                 cd1, cd2 = int(cd / 2), int(cd / 2) + 1
             else:
                 cd1, cd2 = int(cd / 2), int(cd / 2)
             # width, the 3rd dimension
-            cw = (target.get_shape()[2] - refer.get_shape()[2])#.value
+            cw = (target.get_shape()[2] - refer.get_shape()[2])  # .value
             assert (cw >= 0)
             if cw % 2 != 0:
                 cw1, cw2 = int(cw / 2), int(cw / 2) + 1
             else:
                 cw1, cw2 = int(cw / 2), int(cw / 2)
             # height, the 2nd dimension
-            ch = (target.get_shape()[1] - refer.get_shape()[1])#.value
+            ch = (target.get_shape()[1] - refer.get_shape()[1])  # .value
             assert (ch >= 0)
             if ch % 2 != 0:
                 ch1, ch2 = int(ch / 2), int(ch / 2) + 1
@@ -183,7 +192,7 @@ class Trainer:
             d = Conv3D(filters, kernel_size=f_size, strides=2, padding='same')(layer_input)
             d = LeakyReLU(alpha=0.2)(d)
             if self.adain:
-                d = Lambda(adain)(d, g, b)
+                d = Lambda(adain)([d, g, b])
             elif bn:
                 d = BatchNormalization(momentum=0.8)(d)
             return d
@@ -318,10 +327,11 @@ class Trainer:
         cnt = 0
         for i in range(r):
             for j in range(c):
-                axs[i, j].imshow(gen_imgs[cnt].reshape((self.img_depth, self.img_rows, self.img_cols))[int(self.img_depth/2), :, :])
+                axs[i, j].imshow(
+                    gen_imgs[cnt].reshape((self.img_depth, self.img_rows, self.img_cols))[int(self.img_depth / 2), :,
+                    :])
                 axs[i, j].set_title(titles[i])
                 axs[i, j].axis('off')
                 cnt += 1
         fig.savefig(os.path.join(savepath, filename))
         plt.close()
-
