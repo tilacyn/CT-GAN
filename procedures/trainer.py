@@ -191,7 +191,7 @@ class Trainer:
                 b = Dense(32)(layer_input)
             d = Conv3D(filters, kernel_size=f_size, strides=2, padding='same')(layer_input)
             d = LeakyReLU(alpha=0.2)(d)
-            if self.adain:
+            if self.adain and bn:
                 d = Lambda(adain)([d, g, b])
             elif bn:
                 d = BatchNormalization(momentum=0.8)(d)
