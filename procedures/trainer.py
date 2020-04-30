@@ -157,7 +157,7 @@ class Trainer:
 
             # Multiply by x[1] (GAMMA) and add x[2] (BETA)
             result = y * g + b
-            print('shape after adain: ' + result.shape)
+            print('shape after adain: ' + str(result.shape))
             return result
 
         def get_crop_shape(target, refer):
