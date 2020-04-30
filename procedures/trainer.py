@@ -192,7 +192,9 @@ class Trainer:
             d = Conv3D(filters, kernel_size=f_size, strides=2, padding='same')(layer_input)
             d = LeakyReLU(alpha=0.2)(d)
             if self.adain and bn:
+                self.print('shape before adain: ' + d.shape)
                 d = Lambda(adain)([d, g, b])
+                self.print('shape after adain: ' + d.shape)
             elif bn:
                 d = BatchNormalization(momentum=0.8)(d)
             return d
