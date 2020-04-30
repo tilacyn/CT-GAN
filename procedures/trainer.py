@@ -146,7 +146,7 @@ class Trainer:
             y = (x - mean) / std
 
             # Reshape gamma and beta
-            pool_shape = [-1, 1, 1, 1, y.shape[-1]]
+            pool_shape = [-1, 8, 8, 8, y.shape[-1]]
             print(g.shape)
             print(b.shape)
             g = ktf.reshape(g, pool_shape)
