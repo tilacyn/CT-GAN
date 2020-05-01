@@ -37,9 +37,9 @@ else:
 
 # CT-GAN Configuration
 config['cube_shape'] = np.array([48, 48, 48])  # z,y,x
-config['mask_xlims'] = np.array([6, 26])
-config['mask_ylims'] = np.array([6, 26])
-config['mask_zlims'] = np.array([6, 26])
+config['mask_xlims'] = np.array([14, 34])
+config['mask_ylims'] = np.array([14, 34])
+config['mask_zlims'] = np.array([14, 34])
 config[
     'copynoise'] = True  # If true, the noise touch-up is copied onto the tampered region from a hardcoded coordinate. If false, gaussain interpolated noise is added instead
 
