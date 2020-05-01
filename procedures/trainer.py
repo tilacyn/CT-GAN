@@ -141,7 +141,7 @@ class Trainer:
             print('shape before adain: ' + str(x.shape))
             g = xgb[1]
             b = xgb[2]
-            mean = ktf.mean(x, axis=[0, 1, 2], keepdims=True)
+            mean = ktf.mean(x, axis=[0, 1, 2], keepdims=TrDue)
             std = ktf.std(x, axis=[0, 1, 2], keepdims=True) + 1e-7
             y = (x - mean) / std
 

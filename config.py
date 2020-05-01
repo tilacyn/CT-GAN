@@ -36,7 +36,7 @@ else:
     config['gpus'] = ""
 
 # CT-GAN Configuration
-config['cube_shape'] = np.array([32, 32, 32])  # z,y,x
+config['cube_shape'] = np.array([48, 48, 48])  # z,y,x
 config['mask_xlims'] = np.array([6, 26])
 config['mask_ylims'] = np.array([6, 26])
 config['mask_zlims'] = np.array([6, 26])
