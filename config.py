@@ -36,10 +36,13 @@ else:
     config['gpus'] = ""
 
 # CT-GAN Configuration
-config['cube_shape'] = np.array([48, 48, 48])  # z,y,x
-config['mask_xlims'] = np.array([14, 34])
-config['mask_ylims'] = np.array([14, 34])
-config['mask_zlims'] = np.array([14, 34])
+# config['cube_shape'] = np.array([48, 48, 48])  # z,y,x
+# mask_lims = [14, 34]
+config['cube_shape'] = np.array([32, 32, 32])  # z,y,x
+mask_lims = [6, 26]
+config['mask_xlims'] = np.array(mask_lims)
+config['mask_ylims'] = np.array(mask_lims)
+config['mask_zlims'] = np.array(mask_lims)
 config[
     'copynoise'] = True  # If true, the noise touch-up is copied onto the tampered region from a hardcoded coordinate. If false, gaussain interpolated noise is added instead
 

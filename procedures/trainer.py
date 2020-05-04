@@ -30,7 +30,7 @@ os.environ["CUDA_VISIBLE_DEVICES"] = config['gpus']
 from utils.dataloader import DataLoader, SegmentedDataLoader
 from tensorflow.keras.layers import Input, Dropout, Concatenate, Cropping3D
 from tensorflow.keras.layers import BatchNormalization
-from tensorflow.keras.layers import LeakyReLU
+from tensorflow.keras.layers import LeakyReLU, ReLU
 from tensorflow.keras.layers import UpSampling3D, Conv3D, Dense, Lambda, Flatten
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
@@ -190,19 +190,19 @@ class Trainer:
         def conv3d(layer_input, filters, f_size=4, bn=True):
             """Layers used during downsampling"""
             d = Conv3D(filters, kernel_size=f_size, strides=2, padding='same')(layer_input)
-            d = LeakyReLU(alpha=0.2)(d)
             if self.adain and bn:
                 g = Dense(filters, bias_initializer='ones')(w)
                 b = Dense(filters)(w)
                 d = Lambda(adain)([d, g, b])
             elif bn:
                 d = BatchNormalization(momentum=0.8)(d)
+            d = LeakyReLU(alpha=0.2)(d)
             return d
 
         def deconv3d(layer_input, skip_input, filters, f_size=4, dropout_rate=0.5):
             """Layers used during upsampling"""
             u = UpSampling3D(size=2)(layer_input)
-            u = Conv3D(filters, kernel_size=f_size, strides=1, padding='same', activation='relu')(u)
+            u = Conv3D(filters, kernel_size=f_size, strides=1, padding='same')(u)
             if dropout_rate:
                 u = Dropout(dropout_rate)(u)
             if self.adain:
@@ -211,6 +211,7 @@ class Trainer:
                 u = Lambda(adain)([u, g, b])
             else:
                 u = BatchNormalization(momentum=0.8)(u)
+            u = ReLU()(u)
 
             # u = Concatenate()([u, skip_input])
             ch, cw, cd = get_crop_shape(u, skip_input)
