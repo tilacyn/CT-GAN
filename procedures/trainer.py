@@ -225,8 +225,8 @@ class Trainer:
         print('input shape')
         print(d0.shape)
         w = Flatten()(d0)
-        w = Dense(1000, activation='relu')(w)
-        w = Dense(1000, activation='relu')(w)
+        w = Dense(100, activation='relu')(w)
+        w = Dense(100, activation='relu')(w)
 
         # Downsampling
         d1 = conv3d(d0, self.gf, bn=False)
