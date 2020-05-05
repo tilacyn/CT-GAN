@@ -53,6 +53,10 @@ def get_session():
 tf.compat.v1.keras.backend.set_session(get_session())
 
 
+def wasserstein_loss(y_true, y_pred):
+    return ktf.mean(y_true * y_pred)
+
+
 # tf.Session
 
 class Trainer:
@@ -102,9 +106,11 @@ class Trainer:
         # Build and compile the discriminator
         self.discriminator = self.build_discriminator()
         self.discriminator.summary()
-        self.discriminator.compile(loss='mse',
-                                   optimizer=optimizer_G,
-                                   metrics=['accuracy'])
+        self.discriminator.compile(
+            # loss='mse',
+            loss=wasserstein_loss,
+            optimizer=optimizer_G,
+            metrics=['accuracy'])
 
         # -------------------------
         # Construct Computational
@@ -129,9 +135,11 @@ class Trainer:
         valid = self.discriminator([fake_A, img_B])
 
         self.combined = Model(inputs=[img_A, img_B], outputs=[valid, fake_A])
-        self.combined.compile(loss=['mse', 'mae'],
-                              loss_weights=[1, 100],
-                              optimizer=optimizer)
+        self.combined.compile(
+            # loss=['mse', 'mae'],
+            loss=wasserstein_loss,
+            loss_weights=[1, 100],
+            optimizer=optimizer)
 
     def build_generator(self):
         """U-Net Generator"""
@@ -291,7 +299,7 @@ class Trainer:
                 fake_A = self.generator.predict([imgs_B])
 
                 # Train the discriminators (original images = real / generated = Fake)
-                if batch_i % 10 == 0:
+                if True:
                     d_loss_real = self.discriminator.train_on_batch([imgs_A, imgs_B], valid)
                     d_loss_fake = self.discriminator.train_on_batch([fake_A, imgs_B], fake)
                     d_loss = 0.5 * np.add(d_loss_real, d_loss_fake)
