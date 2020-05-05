@@ -313,7 +313,7 @@ class Trainer:
                 # Train the generators
                 for i in range(self.generator_weight_updates):
                     g_loss = self.combined.train_on_batch([imgs_A, imgs_B], valid)
-                    print(self.combined.predict([imgs_A, imgs_B]))
+                    # print(self.combined.predict([imgs_A, imgs_B]))
                 elapsed_time = datetime.datetime.now() - start_time
                 # Plot the progress
                 print("[Epoch %d/%d] [Batch %d/%d] [D loss: %f, acc: %3d%%] [G loss: %f] time: %s" % (epoch, epochs,
@@ -321,7 +321,7 @@ class Trainer:
                                                                                                       self.dataloader.n_batches,
                                                                                                       d_loss[0],
                                                                                                       100 * d_loss[1],
-                                                                                                      g_loss[0],
+                                                                                                      g_loss,
                                                                                                       elapsed_time))
 
                 # If at save interval => save generated image samples
