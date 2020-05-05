@@ -291,12 +291,12 @@ class Trainer:
                 fake_A = self.generator.predict([imgs_B])
 
                 # Train the discriminators (original images = real / generated = Fake)
-                # if epoch % 2 == 0:
-                d_loss_real = self.discriminator.train_on_batch([imgs_A, imgs_B], valid)
-                d_loss_fake = self.discriminator.train_on_batch([fake_A, imgs_B], fake)
-                d_loss = 0.5 * np.add(d_loss_real, d_loss_fake)
-                # else:
-                #     d_loss = [0, 0]
+                if batch_i % 10 == 0:
+                    d_loss_real = self.discriminator.train_on_batch([imgs_A, imgs_B], valid)
+                    d_loss_fake = self.discriminator.train_on_batch([fake_A, imgs_B], fake)
+                    d_loss = 0.5 * np.add(d_loss_real, d_loss_fake)
+                else:
+                    d_loss = [0, 0]
 
                 # -----------------
                 #  Train Generator
