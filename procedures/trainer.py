@@ -134,7 +134,7 @@ class Trainer:
         # Discriminators determines validity of translated images / condition pairs
         valid = self.discriminator([fake_A, img_B])
 
-        self.combined = Model(inputs=[img_A, img_B], outputs=[valid, fake_A])
+        self.combined = Model(inputs=[img_A, img_B], outputs=valid)
         self.combined.compile(
             # loss=['mse', 'mae'],
             loss=wasserstein_loss,
@@ -280,8 +280,8 @@ class Trainer:
     def train(self, epochs, batch_size=1, sample_interval=50):
         start_time = datetime.datetime.now()
         # Adversarial loss ground truths
-        valid = np.zeros((batch_size,) + self.disc_patch)
-        fake = np.ones((batch_size,) + self.disc_patch)
+        valid = np.ones((batch_size,) + self.disc_patch)
+        fake = -valid
 
         for epoch in range(epochs):
             # save model
@@ -312,7 +312,7 @@ class Trainer:
 
                 # Train the generators
                 for i in range(self.generator_weight_updates):
-                    g_loss = self.combined.train_on_batch([imgs_A, imgs_B], [valid, imgs_A])
+                    g_loss = self.combined.train_on_batch([imgs_A, imgs_B], valid)
                 elapsed_time = datetime.datetime.now() - start_time
                 # Plot the progress
                 print("[Epoch %d/%d] [Batch %d/%d] [D loss: %f, acc: %3d%%] [G loss: %f] time: %s" % (epoch, epochs,
