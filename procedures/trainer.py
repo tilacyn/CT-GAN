@@ -301,8 +301,8 @@ class Trainer:
                 # ---------------------
                 # Condition on B and generate a translated version
                 fake_A = self.generator.predict([imgs_B])
-                print('fake', self.discriminator.predict([fake_A, imgs_B]).mean())
-                print('original', self.discriminator.predict([imgs_A, imgs_B]).mean())
+                fake_predict = self.discriminator.predict([fake_A, imgs_B]).mean()
+                original_predict = self.discriminator.predict([imgs_A, imgs_B]).mean()
 
                 # Train the discriminators (original images = real / generated = Fake)
                 if True:
@@ -317,19 +317,25 @@ class Trainer:
                 # -----------------
 
                 # Train the generators
+                combined1 = self.combined.predict([imgs_A, imgs_B]).mean()
                 for i in range(self.generator_weight_updates):
-                    print('combined ', self.combined.predict([imgs_A, imgs_B]).mean())
                     g_loss = self.combined.train_on_batch([imgs_A, imgs_B], valid)
-                    print('combined ', self.combined.predict([imgs_A, imgs_B]).mean())
+                combined2 = self.combined.predict([imgs_A, imgs_B]).mean()
                 elapsed_time = datetime.datetime.now() - start_time
                 # Plot the progress
-                print("[Epoch %d/%d] [Batch %d/%d] [D loss: %f, acc: %3d%%] [G loss: %f] time: %s" % (epoch, epochs,
-                                                                                                      batch_i,
-                                                                                                      self.dataloader.n_batches,
-                                                                                                      d_loss[0],
-                                                                                                      100 * d_loss[1],
-                                                                                                      g_loss,
-                                                                                                      elapsed_time))
+                print(
+                    "[Epoch %d/%d] [Batch %d/%d] [D loss: %f, acc: %3d%%] [G loss: %f] [c1: %f, c2: %f, o: %f, f: %f] time: %s" % (
+                        epoch, epochs,
+                        batch_i,
+                        self.dataloader.n_batches,
+                        d_loss[0],
+                        100 * d_loss[1],
+                        g_loss,
+                        combined1,
+                        combined2,
+                        original_predict,
+                        fake_predict,
+                        elapsed_time))
 
                 # If at save interval => save generated image samples
                 if batch_i % sample_interval == 0:
