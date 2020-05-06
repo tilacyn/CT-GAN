@@ -280,7 +280,8 @@ class Trainer:
     def train(self, epochs, batch_size=1, sample_interval=50):
         start_time = datetime.datetime.now()
         # Adversarial loss ground truths
-        valid = np.ones((batch_size,) + self.disc_patch)
+        # valid = np.ones((batch_size,) + self.disc_patch)
+        valid = np.ones(batch_size)
         fake = -valid
 
         for epoch in range(epochs):
