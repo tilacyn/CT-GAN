@@ -306,9 +306,9 @@ class Trainer:
                 discriminator_output['original'] = self.discriminator.predict([imgs_A, imgs_B])
 
                 print('fake')
-                print(discriminator_output['fake'])
+                print(discriminator_output['fake'].tolist())
                 print('original')
-                print(discriminator_output['original'])
+                print(discriminator_output['original'].tolist())
 
                 # Train the discriminators (original images = real / generated = Fake)
                 if True:
@@ -324,8 +324,9 @@ class Trainer:
 
                 # Train the generators
                 for i in range(self.generator_weight_updates):
+                    print('combined')
+                    print(self.combined.predict([imgs_A, imgs_B]).tolist())
                     g_loss = self.combined.train_on_batch([imgs_A, imgs_B], valid)
-                    # print(self.combined.predict([imgs_A, imgs_B]))
                 elapsed_time = datetime.datetime.now() - start_time
                 # Plot the progress
                 print("[Epoch %d/%d] [Batch %d/%d] [D loss: %f, acc: %3d%%] [G loss: %f] time: %s" % (epoch, epochs,
