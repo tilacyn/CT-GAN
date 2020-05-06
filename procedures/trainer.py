@@ -273,7 +273,10 @@ class Trainer:
         d3 = d_layer(d2, self.df * 4)
         d4 = d_layer(d3, self.df * 8)
 
-        validity = Conv3D(1, kernel_size=4, strides=1, padding='same')(d4)
+        d5 = Conv3D(1, kernel_size=4, strides=1, padding='same')(d4)
+
+        d6 = Flatten()(d5)
+        validity = Dense(1)(d6)
 
         return Model([img_A, img_B], validity)
 
