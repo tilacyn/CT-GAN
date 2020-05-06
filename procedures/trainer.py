@@ -297,6 +297,14 @@ class Trainer:
                 # ---------------------
                 # Condition on B and generate a translated version
                 fake_A = self.generator.predict([imgs_B])
+                discriminator_output = {}
+                discriminator_output['fake'] = self.discriminator.predict([fake_A, imgs_B])
+                discriminator_output['original'] = self.discriminator.predict([imgs_A, imgs_B])
+
+                print('fake')
+                print(discriminator_output['fake'])
+                print('original')
+                print(discriminator_output['original'])
 
                 # Train the discriminators (original images = real / generated = Fake)
                 if True:
