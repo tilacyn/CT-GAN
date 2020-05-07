@@ -325,6 +325,8 @@ class Trainer:
                     g_loss = self.combined.train_on_batch([imgs_A, imgs_B], valid)
                 combined2 = self.combined.predict([imgs_A, imgs_B]).mean()
                 elapsed_time = datetime.datetime.now() - start_time
+                g_losses.append(g_loss)
+                d_losses.append(d_loss[0])
                 # Plot the progress
                 print(
                     "[Epoch %d/%d] [Batch %d/%d] [D loss: %f, acc: %3d%%] [G loss: %f] [c1: %f, c2: %f, o: %f, f: %f] time: %s" % (
@@ -336,8 +338,8 @@ class Trainer:
                         g_loss,
                         combined1,
                         combined2,
-                        original_predict,
-                        fake_predict,
+                        original_predict.mean(),
+                        fake_predict.mean(),
                         elapsed_time))
 
                 # If at save interval => save generated image samples
