@@ -295,14 +295,17 @@ class Trainer:
                 self.discriminator.save(
                     os.path.join(self.modelpath, "D_model.h5"))  # creates a HDF5 file 'my_model.h5'
 
+            g_losses = []
+            d_losses = []
+
             for batch_i, (imgs_A, imgs_B) in enumerate(self.dataloader.load_batch(batch_size)):
                 # ---------------------
                 #  Train Discriminator
                 # ---------------------
                 # Condition on B and generate a translated version
                 fake_A = self.generator.predict([imgs_B])
-                fake_predict = self.discriminator.predict([fake_A, imgs_B]).mean()
-                original_predict = self.discriminator.predict([imgs_A, imgs_B]).mean()
+                fake_predict = self.discriminator.predict([fake_A, imgs_B])
+                original_predict = self.discriminator.predict([imgs_A, imgs_B])
 
                 # Train the discriminators (original images = real / generated = Fake)
                 if True:
@@ -340,6 +343,15 @@ class Trainer:
                 # If at save interval => save generated image samples
                 if batch_i % sample_interval == 0:
                     self.show_progress(epoch, batch_i)
+                    self.plot_loss(epoch, g_losses, d_losses)
+
+    def plot_loss(self, epoch, g_losses, d_losses):
+        filename = "loss_%d.png" % (epoch)
+        filepath = os.path.join(config['progress'], "injector", self.savepath, filename)
+        plt.plot(range(len(g_losses)), g_losses, label='gen')
+        plt.plot(range(len(d_losses)), d_losses, label='disc')
+        plt.legend()
+        plt.show()
 
     def show_progress(self, epoch, batch_i):
         filename = "%d_%d.png" % (epoch, batch_i)
