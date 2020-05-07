@@ -34,6 +34,7 @@ from tensorflow.keras.layers import LeakyReLU, ReLU
 from tensorflow.keras.layers import UpSampling3D, Conv3D, Dense, Lambda, Flatten
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.constraints import Constraint
 import matplotlib.pyplot as plt
 import datetime
 import numpy as np
@@ -253,10 +254,11 @@ class Trainer:
         return Model(inputs=[d0], outputs=[output_img])
 
     def build_discriminator(self):
+        constraint = ClipConstraint(0.01)
 
         def d_layer(layer_input, filters, f_size=4, bn=True):
             """Discriminator layer"""
-            d = Conv3D(filters, kernel_size=f_size, strides=2, padding='same')(layer_input)
+            d = Conv3D(filters, kernel_size=f_size, strides=2, padding='same', kernel_constraint=constraint)(layer_input)
             d = LeakyReLU(alpha=0.2)(d)
             if bn:
                 d = BatchNormalization(momentum=0.8)(d)
@@ -273,7 +275,7 @@ class Trainer:
         d3 = d_layer(d2, self.df * 4)
         d4 = d_layer(d3, self.df * 8)
 
-        d5 = Conv3D(1, kernel_size=4, strides=1, padding='same')(d4)
+        d5 = Conv3D(1, kernel_size=4, strides=1, padding='same', kernel_constraint=constraint)(d4)
 
         d6 = Flatten()(d5)
         validity = Dense(1)(d6)
@@ -287,6 +289,10 @@ class Trainer:
         valid = np.ones(batch_size)
         fake = -valid
 
+        g_losses = []
+        d_losses_fake = []
+        d_losses_original = []
+
         for epoch in range(epochs):
             # save model
             if epoch > 0:
@@ -294,9 +300,6 @@ class Trainer:
                 self.generator.save(os.path.join(self.modelpath, "G_model.h5"))  # creates a HDF5 file
                 self.discriminator.save(
                     os.path.join(self.modelpath, "D_model.h5"))  # creates a HDF5 file 'my_model.h5'
-
-            g_losses = []
-            d_losses = []
 
             for batch_i, (imgs_A, imgs_B) in enumerate(self.dataloader.load_batch(batch_size)):
                 # ---------------------
@@ -311,6 +314,8 @@ class Trainer:
                 if True:
                     d_loss_real = self.discriminator.train_on_batch([imgs_A, imgs_B], valid)
                     d_loss_fake = self.discriminator.train_on_batch([fake_A, imgs_B], fake)
+                    d_losses_fake.append(d_loss_fake[0])
+                    d_losses_original.append(d_loss_real[0])
                     d_loss = 0.5 * np.add(d_loss_real, d_loss_fake)
                 else:
                     d_loss = [0, 0]
@@ -326,7 +331,6 @@ class Trainer:
                 combined2 = self.combined.predict([imgs_A, imgs_B]).mean()
                 elapsed_time = datetime.datetime.now() - start_time
                 g_losses.append(g_loss)
-                d_losses.append(d_loss[0])
                 # Plot the progress
                 print(
                     "[Epoch %d/%d] [Batch %d/%d] [D loss: %f, acc: %3d%%] [G loss: %f] [c1: %f, c2: %f, o: %f, f: %f] time: %s" % (
@@ -345,15 +349,18 @@ class Trainer:
                 # If at save interval => save generated image samples
                 if batch_i % sample_interval == 0:
                     self.show_progress(epoch, batch_i)
-                    self.plot_loss(epoch, g_losses, d_losses)
+                    self.plot_loss(epoch, g_losses, d_losses_fake, d_losses_original)
 
-    def plot_loss(self, epoch, g_losses, d_losses):
+    def plot_loss(self, epoch, g_losses, d_losses_fake, d_losses_original):
         filename = "loss_%d.png" % (epoch)
         filepath = os.path.join(config['progress'], "injector", self.savepath, filename)
         plt.plot(range(len(g_losses)), g_losses, label='gen')
-        plt.plot(range(len(d_losses)), d_losses, label='disc')
+        plt.plot(range(len(d_losses_fake)), d_losses_fake, label='crit_fake')
+        plt.plot(range(len(d_losses_original)), d_losses_original, label='crit_orig')
         plt.legend()
+        plt.savefig(filepath)
         plt.show()
+
 
     def show_progress(self, epoch, batch_i):
         filename = "%d_%d.png" % (epoch, batch_i)
@@ -385,3 +392,17 @@ class Trainer:
                 cnt += 1
         fig.savefig(os.path.join(savepath, filename))
         plt.close()
+
+
+class ClipConstraint(Constraint):
+    # set clip value when initialized
+    def __init__(self, clip_value):
+        self.clip_value = clip_value
+
+    # clip model weights to hypercube
+    def __call__(self, weights):
+        return ktf.clip(weights, -self.clip_value, self.clip_value)
+
+    # get the config
+    def get_config(self):
+        return {'clip_value': self.clip_value}
