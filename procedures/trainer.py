@@ -314,6 +314,8 @@ class Trainer:
                 if True:
                     d_loss_real = self.discriminator.train_on_batch([imgs_A, imgs_B], valid)
                     d_loss_fake = self.discriminator.train_on_batch([fake_A, imgs_B], fake)
+                    print('d loss fake ', d_loss_fake[0])
+                    print('d loss real ', d_loss_real[0])
                     d_losses_fake.append(d_loss_fake[0])
                     d_losses_original.append(d_loss_real[0])
                     d_loss = 0.5 * np.add(d_loss_real, d_loss_fake)
