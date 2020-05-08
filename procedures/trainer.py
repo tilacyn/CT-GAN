@@ -302,7 +302,7 @@ class Trainer:
                 self.discriminator.save(
                     os.path.join(self.modelpath, "D_model.h5"))  # creates a HDF5 file 'my_model.h5'
 
-            for batch_i, (ximgs_A, imgs_B) in enumerate(self.dataloader.load_batch(batch_size)):
+            for batch_i, (imgs_A, imgs_B) in enumerate(self.dataloader.load_batch(batch_size)):
                 # ---------------------
                 #  Train Discriminator
                 # ---------------------
