@@ -62,7 +62,7 @@ def wasserstein_loss(y_true, y_pred):
 
 class Trainer:
     def __init__(self, isInjector=True, savepath='default', d_lr=0.0002, combined_lr=0.00001, modelpath=None,
-                 generator_weight_updates=1, adain=False):
+                 generator_weight_updates=1, adain=False, wgan=False):
         self.generator_weight_updates = generator_weight_updates
         self.isInjector = isInjector
         self.savepath = savepath
@@ -100,6 +100,7 @@ class Trainer:
         # Number of filters in the first layer of G and D
         self.gf = 100
         self.df = 100
+        self.wgan = wgan
 
         optimizer = Adam(self.combined_lr, 0.5)
         optimizer_G = Adam(self.d_lr, 0.5)
@@ -107,9 +108,9 @@ class Trainer:
         # Build and compile the discriminator
         self.discriminator = self.build_discriminator()
         self.discriminator.summary()
+        discriminator_loss = wasserstein_loss if wgan else 'mse'
         self.discriminator.compile(
-            # loss='mse',
-            loss=wasserstein_loss,
+            loss=discriminator_loss,
             optimizer=optimizer_G,
             metrics=['accuracy'])
 
@@ -136,9 +137,9 @@ class Trainer:
         valid = self.discriminator([fake_A, img_B])
 
         self.combined = Model(inputs=[img_A, img_B], outputs=valid)
+        combined_loss = wasserstein_loss if self.wgan else ['mse', 'mae']
         self.combined.compile(
-            # loss=['mse', 'mae'],
-            loss=wasserstein_loss,
+            loss=combined_loss,
             loss_weights=[1, 100],
             optimizer=optimizer)
 
@@ -301,7 +302,7 @@ class Trainer:
                 self.discriminator.save(
                     os.path.join(self.modelpath, "D_model.h5"))  # creates a HDF5 file 'my_model.h5'
 
-            for batch_i, (imgs_A, imgs_B) in enumerate(self.dataloader.load_batch(batch_size)):
+            for batch_i, (ximgs_A, imgs_B) in enumerate(self.dataloader.load_batch(batch_size)):
                 # ---------------------
                 #  Train Discriminator
                 # ---------------------
