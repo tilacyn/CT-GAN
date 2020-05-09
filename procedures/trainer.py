@@ -312,7 +312,7 @@ class Trainer:
                 original_predict = self.discriminator.predict([imgs_A, imgs_B])
 
                 # Train the discriminators (original images = real / generated = Fake)
-                if True:
+                if batch_i % self.generator_weight_updates == 0:
                     d_loss_real = self.discriminator.train_on_batch([imgs_A, imgs_B], valid)
                     d_loss_fake = self.discriminator.train_on_batch([fake_A, imgs_B], fake)
                     print('d loss fake ', d_loss_fake[0])
@@ -329,7 +329,7 @@ class Trainer:
 
                 # Train the generators
                 combined1 = self.combined.predict([imgs_A, imgs_B]).mean()
-                for i in range(self.generator_weight_updates):
+                for i in range(1):
                     g_loss = self.combined.train_on_batch([imgs_A, imgs_B], valid)
                 combined2 = self.combined.predict([imgs_A, imgs_B]).mean()
                 elapsed_time = datetime.datetime.now() - start_time
