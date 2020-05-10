@@ -21,6 +21,9 @@
 # SOFTWARE.
 
 from __future__ import print_function, division
+
+import time
+
 from config import *  # user configuration in config.py
 import os
 
@@ -296,6 +299,7 @@ class Trainer:
         g_losses = []
         d_losses_fake = []
         d_losses_original = []
+        np.random.seed(time.time())
 
         for epoch in range(epochs):
             # save model
@@ -315,7 +319,7 @@ class Trainer:
                 original_predict = self.discriminator.predict([imgs_A, imgs_B])
 
                 # Train the discriminators (original images = real / generated = Fake)
-                if batch_i % self.generator_weight_updates == 0:
+                if batch_i % self.generator_weight_updates == np.random.randint(self.generator_weight_updates):
                     d_loss_real = self.discriminator.train_on_batch([imgs_A, imgs_B], valid)
                     d_loss_fake = self.discriminator.train_on_batch([fake_A, imgs_B], fake)
                     print('d loss fake ', d_loss_fake[0])
