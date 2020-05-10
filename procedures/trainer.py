@@ -62,7 +62,7 @@ def wasserstein_loss(y_true, y_pred):
 
 class Trainer:
     def __init__(self, isInjector=True, savepath='default', d_lr=0.0002, combined_lr=0.00001, modelpath=None,
-                 generator_weight_updates=1, adain=False, wgan=False):
+                 generator_weight_updates=1, adain=False, wgan=False, dropout=True):
         self.generator_weight_updates = generator_weight_updates
         self.isInjector = isInjector
         self.savepath = savepath
@@ -101,6 +101,7 @@ class Trainer:
         self.gf = 100
         self.df = 100
         self.wgan = wgan
+        self.dropout = dropout
 
         optimizer = Adam(self.combined_lr, 0.5)
         optimizer_G = Adam(self.d_lr, 0.5)
@@ -209,10 +210,12 @@ class Trainer:
             d = LeakyReLU(alpha=0.2)(d)
             return d
 
-        def deconv3d(layer_input, skip_input, filters, f_size=4, dropout_rate=0.5):
+        def deconv3d(layer_input, skip_input, filters, f_size=4, dropout_rate='self'):
             """Layers used during upsampling"""
             u = UpSampling3D(size=2)(layer_input)
             u = Conv3D(filters, kernel_size=f_size, strides=1, padding='same')(u)
+            if dropout_rate == 'self':
+                dropout_rate = 0.5 if self.dropout else False
             if dropout_rate:
                 u = Dropout(dropout_rate)(u)
             if self.adain:
