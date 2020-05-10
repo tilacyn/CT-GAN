@@ -299,7 +299,7 @@ class Trainer:
         g_losses = []
         d_losses_fake = []
         d_losses_original = []
-        np.random.seed(time.time())
+        np.random.seed(int(time.time()))
 
         for epoch in range(epochs):
             # save model
