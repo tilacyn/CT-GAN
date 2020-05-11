@@ -336,11 +336,10 @@ class Trainer:
 
                 # Train the generators
                 combined1 = self.combined.predict([imgs_A, imgs_B])[0].mean()
-                for i in range(1):
-                    g_loss = self.combined.train_on_batch([imgs_A, imgs_B], [valid, imgs_A])
+                g_loss = self.combined.train_on_batch([imgs_A, imgs_B], [valid, imgs_A])
                 combined2 = self.combined.predict([imgs_A, imgs_B])[0].mean()
                 elapsed_time = datetime.datetime.now() - start_time
-                g_losses.append(g_loss)
+                g_losses.append(g_loss.mean())
                 # Plot the progress
                 print(
                     "[Epoch %d/%d] [Batch %d/%d] [D loss: %f, acc: %3d%%] [G loss: %f] [c1: %f, c2: %f, o: %f, f: %f] time: %s" % (
@@ -349,7 +348,7 @@ class Trainer:
                         self.dataloader.n_batches,
                         d_loss[0],
                         100 * d_loss[1],
-                        g_loss,
+                        g_loss.mean(),
                         combined1,
                         combined2,
                         original_predict.mean(),
