@@ -127,7 +127,7 @@ class Trainer:
             'combined loss' : self.combined_loss
         }
         with open(params_path, 'w') as params_file:
-            json.dump(params, params_file)
+            json.dump(params, params_file, indent=2)
 
 
     def build_combined(self):
