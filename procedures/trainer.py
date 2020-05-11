@@ -44,6 +44,7 @@ import numpy as np
 
 import tensorflow as tf
 import tensorflow.keras.backend as ktf
+import json
 
 
 # import keras.backend.tensorflow_backend as ktf
@@ -61,11 +62,14 @@ def wasserstein_loss(y_true, y_pred):
     return ktf.mean(y_true * y_pred)
 
 
-# tf.Session
+def get_loss(name):
+    return wasserstein_loss if name == 'wasserstein' else name
 
 class Trainer:
     def __init__(self, isInjector=True, savepath='default', d_lr=0.0002, combined_lr=0.00001, modelpath=None,
-                 generator_weight_updates=1, adain=False, wgan=False, dropout=True):
+                 generator_weight_updates=1, adain=False, wgan=False, dropout=True, combined_loss=None):
+        self.combined_loss = ['wasserstein', 'mse'] if combined_loss is None else combined_loss
+
         self.generator_weight_updates = generator_weight_updates
         self.isInjector = isInjector
         self.savepath = savepath
@@ -106,13 +110,32 @@ class Trainer:
         self.wgan = wgan
         self.dropout = dropout
 
+        self.build_combined()
+        self.save_model_params()
+
+    def save_model_params(self):
+        params_path = os.path.join(config['progress'], "injector", self.savepath, 'params.json')
+        params = {
+            'wgan' : self.wgan,
+            'dropout' : self.dropout,
+            'adain' : self.adain,
+            'discriminator lr' : self.d_lr,
+            'combined lr' : self.combined_lr,
+            'generator weight updates' : self.generator_weight_updates,
+            'combined loss' : self.combined_loss
+        }
+        with open(params_path, 'w') as params_file:
+            json.dump(params, params_file)
+
+
+    def build_combined(self):
         optimizer = Adam(self.combined_lr, 0.5)
         optimizer_G = Adam(self.d_lr, 0.5)
 
         # Build and compile the discriminator
         self.discriminator = self.build_discriminator()
         self.discriminator.summary()
-        discriminator_loss = wasserstein_loss if wgan else 'mse'
+        discriminator_loss = wasserstein_loss if self.wgan else 'mse'
         self.discriminator.compile(
             loss=discriminator_loss,
             optimizer=optimizer_G,
@@ -141,7 +164,7 @@ class Trainer:
         valid = self.discriminator([fake_A, img_B])
 
         self.combined = Model(inputs=[img_A, img_B], outputs=[valid, fake_A])
-        combined_loss = [wasserstein_loss, 'mse'] if self.wgan else ['mse', 'mae']
+        combined_loss = [get_loss(name) for name in self.combined_loss]
         self.combined.compile(
             loss=combined_loss,
             loss_weights=[1, 100],
