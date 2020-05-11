@@ -140,8 +140,8 @@ class Trainer:
         # Discriminators determines validity of translated images / condition pairs
         valid = self.discriminator([fake_A, img_B])
 
-        self.combined = Model(inputs=[img_A, img_B], outputs=valid)
-        combined_loss = wasserstein_loss if self.wgan else ['mse', 'mae']
+        self.combined = Model(inputs=[img_A, img_B], outputs=[valid, fake_A])
+        combined_loss = [wasserstein_loss, 'mse'] if self.wgan else ['mse', 'mae']
         self.combined.compile(
             loss=combined_loss,
             loss_weights=[1, 100],
@@ -335,10 +335,10 @@ class Trainer:
                 # -----------------
 
                 # Train the generators
-                combined1 = self.combined.predict([imgs_A, imgs_B]).mean()
+                combined1 = self.combined.predict([imgs_A, imgs_B])[0].mean()
                 for i in range(1):
-                    g_loss = self.combined.train_on_batch([imgs_A, imgs_B], valid)
-                combined2 = self.combined.predict([imgs_A, imgs_B]).mean()
+                    g_loss = self.combined.train_on_batch([imgs_A, imgs_B], [valid, imgs_A])
+                combined2 = self.combined.predict([imgs_A, imgs_B])[0].mean()
                 elapsed_time = datetime.datetime.now() - start_time
                 g_losses.append(g_loss)
                 # Plot the progress
