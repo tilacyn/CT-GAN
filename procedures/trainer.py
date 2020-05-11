@@ -111,10 +111,12 @@ class Trainer:
         self.dropout = dropout
 
         self.build_combined()
+        self.savepath = os.path.join(config['progress'], "injector", self.savepath)
+        os.makedirs(self.savepath, exist_ok=True)
         self.save_model_params()
 
     def save_model_params(self):
-        params_path = os.path.join(config['progress'], "injector", self.savepath, 'params.json')
+        params_path = os.path.join(self.savepath, 'params.json')
         params = {
             'wgan' : self.wgan,
             'dropout' : self.dropout,
@@ -386,7 +388,7 @@ class Trainer:
 
     def plot_loss(self, epoch, g_losses, d_losses_fake, d_losses_original):
         filename = "loss_%d.png" % (epoch)
-        filepath = os.path.join(config['progress'], "injector", self.savepath, filename)
+        filepath = os.path.join(self.savepath, filename)
         plt.plot(range(len(g_losses)), g_losses, label='gen')
         plt.plot(range(len(d_losses_fake)), d_losses_fake, label='crit_fake')
         plt.plot(range(len(d_losses_original)), d_losses_original, label='crit_orig')
@@ -397,11 +399,6 @@ class Trainer:
 
     def show_progress(self, epoch, batch_i):
         filename = "%d_%d.png" % (epoch, batch_i)
-        if self.isInjector:
-            savepath = os.path.join(config['progress'], "injector", self.savepath)
-        else:
-            savepath = os.path.join(config['progress'], "remover")
-        os.makedirs(savepath, exist_ok=True)
         r, c = 3, 3
 
         imgs_A, imgs_B = self.dataloader.load_data(batch_size=3)
@@ -423,7 +420,7 @@ class Trainer:
                 axs[i, j].set_title(titles[i])
                 axs[i, j].axis('off')
                 cnt += 1
-        fig.savefig(os.path.join(savepath, filename))
+        fig.savefig(os.path.join(self.savepath, filename))
         plt.close()
 
 
