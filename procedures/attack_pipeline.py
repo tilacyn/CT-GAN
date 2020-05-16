@@ -21,7 +21,7 @@
 # SOFTWARE.
 
 from config import *  # user configurations
-from keras.models import load_model
+from tensorflow.keras.models import load_model
 import os
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
