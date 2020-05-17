@@ -22,6 +22,7 @@
 
 from config import *  # user configurations
 from tensorflow.keras.models import load_model
+import tensorflow.keras.backend as ktf
 import os
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
@@ -58,7 +59,7 @@ class scan_manipulator:
         # load models
         print("Loading models")
         if os.path.exists(os.path.join(self.model_inj_path, "G_model.h5")):
-            self.generator_inj = load_model(os.path.join(self.model_inj_path, "G_model.h5"))
+            self.generator_inj = load_model(os.path.join(self.model_inj_path, "G_model.h5"), custom_objects={'ktf' : ktf})
             # load normalization params
             self.norm_inj = np.load(os.path.join(MODEL_PATH_INJECT, 'normalization.npy'))
             # load equalization params
