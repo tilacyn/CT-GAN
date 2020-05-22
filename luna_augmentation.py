@@ -42,4 +42,4 @@ class InjectCoordinatesResolver:
     def resolve(self, path2scan):
         path2label = path2scan[:-9] + 'label.npy'
         label = np.load(path2label)
-        return label[0].astype(np.int32)
+        return label[0, :-1].astype(np.int32)
