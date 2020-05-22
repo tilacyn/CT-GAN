@@ -149,7 +149,38 @@ class scan_manipulator:
             # fix underflow
             mal_cube[mal_cube < -1000] = -1000
             return mal_cube
+        def add_noise_touchups():
+            noise_map_dim = clean_cube_unscaled2.shape
+            ben_cube_ext = clean_cube_unscaled2
+            mal_cube_ext = cutCube(self.scan, coord, noise_map_dim)
+            local_sample = clean_cube_unscaled
 
+            noisemap = np.random.randn(150, 200, 300) * np.std(local_sample[local_sample < -600]) * .6
+            kernel_size = 3
+            factors = sigmoid((mal_cube_ext + 700) / 70)
+            k = kern01(mal_cube_ext.shape[0], kernel_size)
+            for i in range(factors.shape[0]):
+                factors[i, :, :] = factors[i, :, :] * k
+
+            # Perform touch-ups
+            if config[
+                'copynoise']:  # copying similar noise from hard coded location over this lcoation (usually more realistic)
+                benm = cutCube(self.scan, np.array(
+                    [int(self.scan.shape[0] / 2), int(self.scan.shape[1] * .43), int(self.scan.shape[2] * .27)]),
+                               noise_map_dim)
+                x = np.copy(benm)
+                x[x > -800] = np.mean(x[x < -800])
+                noise = x - np.mean(x)
+            else:  # gaussian interpolated noise is used
+                rf = np.ones((3,)) * (60 / np.std(local_sample[local_sample < -600])) * 1.3
+                np.random.seed(np.int64(time.time()))
+                noisemap_s = scipy.ndimage.interpolation.zoom(noisemap, rf, mode='nearest')
+                noise = noisemap_s[:noise_map_dim, :noise_map_dim, :noise_map_dim]
+            mal_cube_ext += noise
+
+            final_cube_s = np.maximum((mal_cube_ext * factors + ben_cube_ext * (1 - factors)), ben_cube_ext)
+
+            return pasteCube(self.scan, final_cube_s, coord)
         print('===Injecting Evidence===')
         if not isVox:
             coord = world2vox(coord, self.scan_spacing, self.scan_orientation, self.scan_origin)
@@ -173,36 +204,7 @@ class scan_manipulator:
 
         ### Noise Touch-ups
         print("Adding noise touch-ups...")
-        noise_map_dim = clean_cube_unscaled2.shape
-        ben_cube_ext = clean_cube_unscaled2
-        mal_cube_ext = cutCube(self.scan, coord, noise_map_dim)
-        local_sample = clean_cube_unscaled
-
+        # self.scan = add_noise_touchups()
         # Init Touch-ups
-        noisemap = np.random.randn(150, 200, 300) * np.std(local_sample[local_sample < -600]) * .6
-        kernel_size = 3
-        factors = sigmoid((mal_cube_ext + 700) / 70)
-        k = kern01(mal_cube_ext.shape[0], kernel_size)
-        for i in range(factors.shape[0]):
-            factors[i, :, :] = factors[i, :, :] * k
 
-        # Perform touch-ups
-        if config[
-            'copynoise']:  # copying similar noise from hard coded location over this lcoation (usually more realistic)
-            benm = cutCube(self.scan, np.array(
-                [int(self.scan.shape[0] / 2), int(self.scan.shape[1] * .43), int(self.scan.shape[2] * .27)]),
-                           noise_map_dim)
-            x = np.copy(benm)
-            x[x > -800] = np.mean(x[x < -800])
-            noise = x - np.mean(x)
-        else:  # gaussian interpolated noise is used
-            rf = np.ones((3,)) * (60 / np.std(local_sample[local_sample < -600])) * 1.3
-            np.random.seed(np.int64(time.time()))
-            noisemap_s = scipy.ndimage.interpolation.zoom(noisemap, rf, mode='nearest')
-            noise = noisemap_s[:noise_map_dim, :noise_map_dim, :noise_map_dim]
-        mal_cube_ext += noise
-
-        final_cube_s = np.maximum((mal_cube_ext * factors + ben_cube_ext * (1 - factors)), ben_cube_ext)
-
-        self.scan = pasteCube(self.scan, final_cube_s, coord)
         print('touch-ups complete')
