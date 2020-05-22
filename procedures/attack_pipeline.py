@@ -77,7 +77,9 @@ class scan_manipulator:
     def load_target_scan(self, load_path):
         self.load_path = load_path
         print('Loading scan')
-        self.scan, self.scan_spacing, self.scan_orientation, self.scan_origin, self.scan_raw_slices = load_scan(
+        # self.scan, self.scan_spacing, self.scan_orientation, self.scan_origin, self.scan_raw_slices = load_scan(
+        #     load_path)
+        self.scan, self.scan_spacing, self.scan_orientation, self.scan_origin, self.scan_raw_slices = load_npy(
             load_path)
         self.scan = self.scan.astype(float)
 
