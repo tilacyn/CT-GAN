@@ -23,7 +23,7 @@ def load_npy(path2scan):
     path2spacing = path2scan[:-9] + 'spacing.npy'
     spacing = np.load(path2spacing)
     scan = np.load(path2scan)
-    return scan, spacing, None, None, None
+    return scan[0], spacing, None, None, None
 
 
 
