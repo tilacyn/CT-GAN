@@ -1,7 +1,7 @@
 from procedures.attack_pipeline import *
 from os.path import join as opjoin
 from abc import abstractmethod
-from coordinates_resolver import NpInjectCoordinatesResolver, MhdInjectCoordinatesResolver
+from augmentation.coordinates_resolver import NpInjectCoordinatesResolver, MhdInjectCoordinatesResolver
 from procedures.mhd_injector import MhdScanManipulator
 
 
