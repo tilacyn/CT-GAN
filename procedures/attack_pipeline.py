@@ -44,7 +44,6 @@ MODEL_PATH_INJECT = config['modelpath_inject']
 def print_mean_std(x):
     print('mean: {}, std: {}'.format(np.mean(x), np.std(x)))
 
-
 class scan_manipulator:
     def __init__(self, model_inj_path):
         print("===Init Tamperer===")
@@ -131,6 +130,7 @@ class scan_manipulator:
 
         def inject(clean_cube_norm):
             print("Injecting evidence")
+            np.random.randn()
 
             x = np.copy(clean_cube_norm)
             x[self.m_zlims[0]:self.m_zlims[1], self.m_xlims[0]:self.m_xlims[1], self.m_ylims[0]:self.m_ylims[1]] = 0
