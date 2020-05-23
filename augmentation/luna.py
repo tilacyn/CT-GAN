@@ -1,4 +1,3 @@
-os.chdir(base_path)
 from procedures.attack_pipeline import *
 from os.path import join as opjoin
 from abc import abstractmethod
