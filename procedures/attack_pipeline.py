@@ -202,7 +202,7 @@ class scan_manipulator:
         print('clean_cube shape ', clean_cube.shape)
         ### Normalize/Equalize Location
         # print_mean_std(clean_cube)
-        # clean_cube_norm = equalize(clean_cube)
+        clean_cube = equalize(clean_cube)
         # print_mean_std(clean_cube_norm)
         ########  Inject Cancer   ##########
 
