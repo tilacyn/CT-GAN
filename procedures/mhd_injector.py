@@ -1,4 +1,4 @@
-from attack_pipeline import scan_manipulator
+from procedures.attack_pipeline import scan_manipulator
 
 from config import *  # user configurations
 from tensorflow.keras.models import load_model
