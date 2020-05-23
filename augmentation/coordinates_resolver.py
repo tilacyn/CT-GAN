@@ -2,9 +2,20 @@ import numpy as np
 from abc import abstractmethod
 import pandas as pd
 from os.path import join as opjoin
-from paths import annos_path
+from paths import annos_path, src_path
+from dicom_utils import world2vox, load_mhd
+
+label_coordinates = pd.read_csv(annos_path)
+
+def get_world_coords(scan_id):
+    return label_coordinates.query('seriesuid == {}'.format(scan_id)).to_numpy()[0, 1:-1]
 
 
+def get_vox_coords(scan_id):
+    mhd_file = opjoin(src_path, '{}.mhd'.format(scan_id))
+    scan, spacing, orientation, origin = load_mhd(mhd_file)
+    world_coords = get_world_coords(scan_id)
+    return world2vox(world_coords, spacing, orientation, origin)
 
 class InjectCoordinatesResolver:
     def __init__(self):
@@ -28,10 +39,9 @@ class NpInjectCoordinatesResolver(InjectCoordinatesResolver):
 
 class MhdInjectCoordinatesResolver(InjectCoordinatesResolver):
     def __init__(self):
-        self.label_coordinates = pd.read_csv(annos_path)
         super().__init__()
 
     def resolve(self, path2scan):
-        number = int(path2scan[-7:-4])
-        coord = self.label_coordinates.query('seriesuid == {}'.format(number)).to_numpy()[0, 1:-1]
+        scan_id = int(path2scan[-7:-4])
+        coord = get_world_coords(scan_id)
         return np.array([coord[2], coord[1], coord[0]])
