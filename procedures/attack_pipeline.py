@@ -41,8 +41,10 @@ from utils.utils import *
 
 MODEL_PATH_INJECT = config['modelpath_inject']
 
+
 def print_mean_std(x):
     print('mean: {}, std: {}'.format(np.mean(x), np.std(x)))
+
 
 class scan_manipulator:
     def __init__(self, model_inj_path):
@@ -81,9 +83,11 @@ class scan_manipulator:
         print('Loading scan')
         # self.scan, self.scan_spacing, self.scan_orientation, self.scan_origin, self.scan_raw_slices = load_scan(
         #     load_path)
-        self.scan, self.scan_spacing, self.scan_orientation, self.scan_origin, self.scan_raw_slices = load_npy(
-            load_path)
+        self.scan, self.scan_spacing, self.scan_orientation, self.scan_origin, self.scan_raw_slices = self.get_load_function()(load_path)
         self.scan = self.scan.astype(float)
+
+    def get_load_function(self):
+        return load_npy
 
     # saves tampered scan as 'dicom' series or 'numpy' serialization
     def save_tampered_scan(self, save_dir, filename, output_type='dicom'):
@@ -116,7 +120,7 @@ class scan_manipulator:
             # # Store backup reference
             # sdim = int(np.max(cube_shape) * 1.3)
             # clean_cube_unscaled2 = cutCube(self.scan, coord, np.array([sdim, sdim, sdim]))  # for noise touch ups later
-            return clean_cube #, resize_factor, clean_cube_unscaled, clean_cube_unscaled2
+            return clean_cube  # , resize_factor, clean_cube_unscaled, clean_cube_unscaled2
 
         def equalize(clean_cube):
             print("Normalizing sample")

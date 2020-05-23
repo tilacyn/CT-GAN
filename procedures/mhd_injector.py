@@ -20,6 +20,10 @@ class MhdScanManipulator(scan_manipulator):
     def __init__(self, model_inj_path):
         super().__init__(model_inj_path)
 
+
+    def get_load_function(self):
+        return load_scan
+
         # tamper loaded scan at given voxel (index) coordinate
         # coord: E.g. vox: slice_indx, y_indx, x_indx    world: -324.3, 23, -234
         # action: 'inject' or 'remove'
