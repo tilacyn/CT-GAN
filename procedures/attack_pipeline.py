@@ -198,6 +198,7 @@ class scan_manipulator:
         ### Cut Location
         # clean_cube, resize_factor, clean_cube_unscaled, clean_cube_unscaled2 = cut_target(coord)
         clean_cube = cut_target(coord)
+        print('clean_cube shape ', clean_cube.shape)
         ### Normalize/Equalize Location
         # print_mean_std(clean_cube)
         # clean_cube_norm = equalize(clean_cube)
