@@ -7,7 +7,7 @@ from procedures.mhd_injector import MhdScanManipulator
 
 def get_aug_service(mode, scan_paths, generator_path, save_dir):
     if mode == 'mhd':
-        return MhdAugmentationService(scan_paths, generator_path, save_dir)
+        return MhdAugmentationService(_scan_paths, generator_path, save_dir)
     if mode == 'np':
         return NpAugmentationService(scan_paths, generator_path, save_dir)
 
