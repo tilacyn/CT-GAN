@@ -110,7 +110,8 @@ class scan_manipulator:
     def tamper(self, coord, isVox=True):
         def cut_target(coord):
             print("Cutting out target region")
-            cube_shape = get_scaled_shape(config["cube_shape"], 1 / self.scan_spacing)
+            # cube_shape = get_scaled_shape(config["cube_shape"], 1 / self.scan_spacing)
+            cube_shape = config['cube_shape']
             clean_cube = cutCube(self.scan, coord, cube_shape)
             # clean_cube, resize_factor = scale_scan(clean_cube_unscaled, self.scan_spacing)
             # # Store backup reference
