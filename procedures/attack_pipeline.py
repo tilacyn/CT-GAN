@@ -124,6 +124,10 @@ class scan_manipulator:
             clean_cube_norm = (clean_cube_eq - self.norm_inj[0]) / ((self.norm_inj[2] - self.norm_inj[1]))
             return clean_cube_norm
 
+        def normalize(x):
+            print('Real normalization')
+            return (x - np.mean(x)) / np.std(x)
+
         def inject(clean_cube_norm):
             print("Injecting evidence")
 
@@ -190,7 +194,7 @@ class scan_manipulator:
         if not isVox:
             coord = world2vox(coord, self.scan_spacing, self.scan_orientation, self.scan_origin)
 
-        self.scan = equalize(self.scan)
+        self.scan = normalize(self.scan)
         ### Cut Location
         clean_cube, resize_factor, clean_cube_unscaled, clean_cube_unscaled2 = cut_target(coord)
         ### Normalize/Equalize Location
