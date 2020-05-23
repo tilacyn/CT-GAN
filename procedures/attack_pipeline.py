@@ -190,16 +190,18 @@ class scan_manipulator:
         if not isVox:
             coord = world2vox(coord, self.scan_spacing, self.scan_orientation, self.scan_origin)
 
+        self.scan = equalize(self.scan)
         ### Cut Location
         clean_cube, resize_factor, clean_cube_unscaled, clean_cube_unscaled2 = cut_target(coord)
         ### Normalize/Equalize Location
-        print_mean_std(clean_cube)
-        clean_cube_norm = equalize(clean_cube)
-        print_mean_std(clean_cube_norm)
+        # print_mean_std(clean_cube)
+        # clean_cube_norm = equalize(clean_cube)
+        # print_mean_std(clean_cube_norm)
         ########  Inject Cancer   ##########
 
         ### Inject/Remove evidence
-        x_mal = inject(clean_cube_norm)
+        # x_mal = inject(clean_cube_norm)
+        x_mal = inject(clean_cube)
         print_mean_std(x_mal)
 
         ### De-Norm/De-equalize
