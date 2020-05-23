@@ -33,4 +33,4 @@ class MhdInjectCoordinatesResolver(InjectCoordinatesResolver):
 
     def resolve(self, path2scan):
         number = int(path2scan[-7:-4])
-        return self.label_coordinates.query('seriesuid == {}'.format(number))[0, 1:-1]
+        return self.label_coordinates.query('seriesuid == {}'.format(number)).to_numpy()[0, 1:-1]
