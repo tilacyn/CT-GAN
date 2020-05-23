@@ -3,9 +3,9 @@ import scipy.stats as st
 
 
 def cutCube(X, center, shape, padd=0): #center is a 3d coord (zyx)
-    print('x shape ', X.shape)
-    print('center ', center)
-    print('shape ', shape)
+    # print('x shape ', X.shape)
+    # print('center ', center)
+    # print('shape ', shape)
     center = center.astype(int)
     hlz = np.round(shape[0] / 2)
     hly = np.round(shape[1] / 2)
