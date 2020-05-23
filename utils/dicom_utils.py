@@ -113,6 +113,7 @@ def toDicom(save_dir, img_array, pixel_spacing, orientation):
 
 
 def scale_scan(scan, spacing, factor=1):
+    assert spacing is not None
     resize_factor = factor * spacing
     new_real_shape = scan.shape * resize_factor
     new_shape = np.round(new_real_shape)
