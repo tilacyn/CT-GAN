@@ -44,7 +44,10 @@ class MhdScanManipulator(scan_manipulator):
         else:
             print('===Removing Evidence===')
         if not isVox:
+            print('converting world to vox')
+            print('world ', coord)
             coord = world2vox(coord, self.scan_spacing, self.scan_orientation, self.scan_origin)
+            print('vox ', coord)
 
         ### Cut Location
         print("Cutting out target region")
