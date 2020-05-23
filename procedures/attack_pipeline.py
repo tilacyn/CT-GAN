@@ -41,6 +41,9 @@ from utils.utils import *
 
 MODEL_PATH_INJECT = config['modelpath_inject']
 
+def print_mean_std(x):
+    print('mean: {}, std: {}'.format(np.mean(x), np.std(x)))
+
 
 class scan_manipulator:
     def __init__(self, model_inj_path):
@@ -149,6 +152,7 @@ class scan_manipulator:
             # fix underflow
             mal_cube[mal_cube < -1000] = -1000
             return mal_cube
+
         def add_noise_touchups():
             noise_map_dim = clean_cube_unscaled2.shape
             ben_cube_ext = clean_cube_unscaled2
@@ -181,6 +185,7 @@ class scan_manipulator:
             final_cube_s = np.maximum((mal_cube_ext * factors + ben_cube_ext * (1 - factors)), ben_cube_ext)
 
             return pasteCube(self.scan, final_cube_s, coord)
+
         print('===Injecting Evidence===')
         if not isVox:
             coord = world2vox(coord, self.scan_spacing, self.scan_orientation, self.scan_origin)
@@ -188,18 +193,23 @@ class scan_manipulator:
         ### Cut Location
         clean_cube, resize_factor, clean_cube_unscaled, clean_cube_unscaled2 = cut_target(coord)
         ### Normalize/Equalize Location
+        print_mean_std(clean_cube)
         clean_cube_norm = equalize(clean_cube)
+        print_mean_std(clean_cube_norm)
         ########  Inject Cancer   ##########
 
         ### Inject/Remove evidence
         x_mal = inject(clean_cube_norm)
+        print_mean_std(x_mal)
 
         ### De-Norm/De-equalize
         mal_cube = deequalize(x_mal)
+        print_mean_std(mal_cube)
 
         ### Paste Location
         print("Pasting sample into scan")
         mal_cube_scaled, resize_factor = scale_scan(mal_cube, 1 / self.scan_spacing)
+        print_mean_std(mal_cube_scaled)
         self.scan = pasteCube(self.scan, mal_cube_scaled, coord)
 
         ### Noise Touch-ups
