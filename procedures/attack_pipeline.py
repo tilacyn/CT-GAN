@@ -111,12 +111,12 @@ class scan_manipulator:
         def cut_target(coord):
             print("Cutting out target region")
             cube_shape = get_scaled_shape(config["cube_shape"], 1 / self.scan_spacing)
-            clean_cube_unscaled = cutCube(self.scan, coord, cube_shape)
-            clean_cube, resize_factor = scale_scan(clean_cube_unscaled, self.scan_spacing)
-            # Store backup reference
-            sdim = int(np.max(cube_shape) * 1.3)
-            clean_cube_unscaled2 = cutCube(self.scan, coord, np.array([sdim, sdim, sdim]))  # for noise touch ups later
-            return clean_cube, resize_factor, clean_cube_unscaled, clean_cube_unscaled2
+            clean_cube = cutCube(self.scan, coord, cube_shape)
+            # clean_cube, resize_factor = scale_scan(clean_cube_unscaled, self.scan_spacing)
+            # # Store backup reference
+            # sdim = int(np.max(cube_shape) * 1.3)
+            # clean_cube_unscaled2 = cutCube(self.scan, coord, np.array([sdim, sdim, sdim]))  # for noise touch ups later
+            return clean_cube #, resize_factor, clean_cube_unscaled, clean_cube_unscaled2
 
         def equalize(clean_cube):
             print("Normalizing sample")
@@ -196,7 +196,8 @@ class scan_manipulator:
 
         self.scan = normalize(self.scan)
         ### Cut Location
-        clean_cube, resize_factor, clean_cube_unscaled, clean_cube_unscaled2 = cut_target(coord)
+        # clean_cube, resize_factor, clean_cube_unscaled, clean_cube_unscaled2 = cut_target(coord)
+        clean_cube = cut_target(coord)
         ### Normalize/Equalize Location
         # print_mean_std(clean_cube)
         # clean_cube_norm = equalize(clean_cube)
@@ -215,9 +216,9 @@ class scan_manipulator:
 
         ### Paste Location
         print("Pasting sample into scan")
-        mal_cube_scaled, resize_factor = scale_scan(mal_cube, 1 / self.scan_spacing)
-        print_mean_std(mal_cube_scaled)
-        self.scan = pasteCube(self.scan, mal_cube_scaled, coord)
+        # mal_cube_scaled, resize_factor = scale_scan(mal_cube, 1 / self.scan_spacing)
+        # print_mean_std(mal_cube_scaled)
+        self.scan = pasteCube(self.scan, mal_cube, coord)
 
         ### Noise Touch-ups
         print("Adding noise touch-ups...")
