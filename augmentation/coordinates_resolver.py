@@ -3,7 +3,7 @@ from abc import abstractmethod
 import pandas as pd
 from os.path import join as opjoin
 from paths import annos_path, src_path
-from dicom_utils import world2vox, load_mhd
+from utils.dicom_utils import world2vox, load_mhd
 
 label_coordinates = pd.read_csv(annos_path)
 
