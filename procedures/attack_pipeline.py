@@ -205,8 +205,9 @@ class scan_manipulator:
         print_mean_std(x_mal)
 
         ### De-Norm/De-equalize
-        mal_cube = deequalize(x_mal)
-        print_mean_std(mal_cube)
+        # mal_cube = deequalize(x_mal)
+        # print_mean_std(mal_cube)
+        mal_cube = x_mal
 
         ### Paste Location
         print("Pasting sample into scan")
