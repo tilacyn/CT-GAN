@@ -18,16 +18,15 @@ def worldToVoxelCoord(worldCoord, origin, spacing):
     return voxelCoord
 
 
-def get_vox_coords(scan_id, mode='miskry', label_shift=None):
+def get_vox_coords(scan_id, label_shift=None):
     if label_shift is None:
         label_shift = [0, 60, 0]
     mhd_file = opjoin(src_path, '{}.mhd'.format(scan_id))
     scan, spacing, orientation, origin, _ = load_mhd(mhd_file)
     world_coords = get_world_coords(scan_id)
-    if mode == 'mirsky':
-        return world2vox(world_coords, spacing, orientation, origin) + label_shift
-    else:
-        return worldToVoxelCoord(world_coords, origin, spacing)
+    vox_coords = world2vox(world_coords, spacing, orientation, origin)
+    return  np.add(label_shift, vox_coords)
+
 
 
 class InjectCoordinatesResolver:
