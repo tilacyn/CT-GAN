@@ -153,5 +153,15 @@ class MhdScanManipulator(scan_manipulator):
             minv = np.min((np.min(mal_cube_ext), np.min(ben_cube_ext)))
             final_cube_s = (mal_cube_ext + minv) * k + (ben_cube_ext + minv) * (1 - k) - minv
 
+        # make it not so bright
+        final_cube_s = self.reduce_brightness(self.scan, final_cube_s)
         self.scan = pasteCube(self.scan, final_cube_s, coord)
         print('touch-ups complete')
+
+    def reduce_brightness(self, scan, cube):
+        cube_max = np.max(cube)
+        scan_max = np.max(scan)
+        cube_min = np.min(cube)
+        k = (scan_max - cube_min) / (cube_max - cube_min)
+        cube = cube_min +  (cube - cube_min) * k
+        return cube
