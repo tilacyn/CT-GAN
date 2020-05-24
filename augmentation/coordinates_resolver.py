@@ -22,7 +22,7 @@ def get_vox_coords(scan_id, mode='miskry'):
     scan, spacing, orientation, origin, _ = load_mhd(mhd_file)
     world_coords = get_world_coords(scan_id)
     if mode == 'mirsky':
-        return world2vox(world_coords, spacing, orientation, origin)
+        return world2vox(world_coords, spacing, orientation, origin) + [0, 20, 0]
     else:
         return worldToVoxelCoord(world_coords, origin, spacing)
 
@@ -53,4 +53,4 @@ class MhdInjectCoordinatesResolver(InjectCoordinatesResolver):
     def resolve(self, path2scan):
         scan_id = int(path2scan[-7:-4])
         coord = get_vox_coords(scan_id)
-        return coord[::-1]
+        return coord
