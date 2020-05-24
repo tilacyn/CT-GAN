@@ -1,7 +1,8 @@
 from procedures.attack_pipeline import *
 from os.path import join as opjoin
 from abc import abstractmethod
-from augmentation.coordinates_resolver import NpInjectCoordinatesResolver, MhdInjectCoordinatesResolver
+from augmentation.coordinates_resolver import NpInjectCoordinatesResolver, MhdInjectCoordinatesResolver, has_nodule
+import pandas as pd
 from procedures.mhd_injector import MhdScanManipulator
 
 
@@ -16,6 +17,7 @@ class AugmentationService:
     '''
 
     '''
+
     def __init__(self, scan_paths, generator_path, save_dir):
         self.generator_path = generator_path
         self.save_dir = save_dir
@@ -24,6 +26,7 @@ class AugmentationService:
         inject_coords = [self.inject_coords_resolver.resolve(path2scan) for path2scan in scan_paths]
         self.instances = [Instance(scan_path, inject_coord) for scan_path, inject_coord in
                           zip(scan_paths, inject_coords)]
+        self.instances = list(filter(has_nodule, self.instances))
 
     def load_generator(self):
         self.injector = self.get_injector()
@@ -56,6 +59,7 @@ class MhdAugmentationService(AugmentationService):
     def get_coordinates_resolver(self):
         return MhdInjectCoordinatesResolver()
 
+
 class NpAugmentationService(AugmentationService):
     def __init__(self, scan_paths, generator_path, save_dir):
         super().__init__(scan_paths, generator_path, save_dir)
@@ -68,7 +72,6 @@ class NpAugmentationService(AugmentationService):
         return NpInjectCoordinatesResolver()
 
 
-
 class Instance:
     def __init__(self, path2scan, inject_coord):
         self.path2scan = path2scan
@@ -76,4 +79,3 @@ class Instance:
 
     def get_save_filename(self):
         return 'generated_' + self.path2scan.split('/')[-1]
-

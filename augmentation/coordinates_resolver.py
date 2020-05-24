@@ -12,6 +12,10 @@ def get_world_coords(scan_id):
     return label_coordinates.query('seriesuid == {}'.format(scan_id)).to_numpy()[0, 1:-1][::-1]
 
 
+def has_nodule(scan_id):
+    return not label_coordinates.query('seriesuid == {}'.format(scan_id)).empty
+
+
 def worldToVoxelCoord(worldCoord, origin, spacing):
     stretchedVoxelCoord = np.absolute(worldCoord - origin)
     voxelCoord = stretchedVoxelCoord / spacing
