@@ -38,11 +38,13 @@ class AugmentationService:
 
     def augment(self):
         for instance in self.instances:
-            self.injector.load_target_scan(instance.path2scan)
-            print(instance.inject_coords)
-            self.injector.tamper(instance.inject_coords, isVox=self.is_vox)
-            self.injector.save_tampered_scan(self.save_dir, instance.get_save_filename(), 'npy')
-
+            try:
+                self.injector.load_target_scan(instance.path2scan)
+                print(instance.inject_coords)
+                self.injector.tamper(instance.inject_coords, isVox=self.is_vox)
+                self.injector.save_tampered_scan(self.save_dir, instance.get_save_filename(), 'npy')
+            except:
+                pass
     @abstractmethod
     def get_injector(self):
         pass
