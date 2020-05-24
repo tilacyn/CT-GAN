@@ -20,7 +20,7 @@ def worldToVoxelCoord(worldCoord, origin, spacing):
 
 def get_vox_coords(scan_id, label_shift=None):
     if label_shift is None:
-        label_shift = [0, 60, 0]
+        label_shift = [0, 0, 40]
     mhd_file = opjoin(src_path, '{}.mhd'.format(scan_id))
     scan, spacing, orientation, origin, _ = load_mhd(mhd_file)
     world_coords = get_world_coords(scan_id)
