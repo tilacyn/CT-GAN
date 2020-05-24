@@ -48,7 +48,7 @@ class AugmentationService:
 class MhdAugmentationService(AugmentationService):
     def __init__(self, scan_paths, generator_path, save_dir):
         super().__init__(scan_paths, generator_path, save_dir)
-        self.is_vox = False
+        self.is_vox = True
 
     def get_injector(self):
         return MhdScanManipulator(self.generator_path)

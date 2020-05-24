@@ -8,7 +8,7 @@ from utils.dicom_utils import world2vox, load_mhd
 label_coordinates = pd.read_csv(annos_path)
 
 def get_world_coords(scan_id):
-    return label_coordinates.query('seriesuid == {}'.format(scan_id)).to_numpy()[0, 1:-1]
+    return label_coordinates.query('seriesuid == {}'.format(scan_id)).to_numpy()[0, 1:-1][::-1]
 
 def worldToVoxelCoord(worldCoord, origin, spacing):
     stretchedVoxelCoord = np.absolute(worldCoord - origin)
@@ -52,5 +52,5 @@ class MhdInjectCoordinatesResolver(InjectCoordinatesResolver):
 
     def resolve(self, path2scan):
         scan_id = int(path2scan[-7:-4])
-        coord = get_world_coords(scan_id)
-        return np.array([coord[2], coord[1], coord[0]])
+        coord = get_vox_coords(scan_id)
+        return coord[::-1]
