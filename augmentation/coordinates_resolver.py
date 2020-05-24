@@ -7,8 +7,10 @@ from utils.dicom_utils import world2vox, load_mhd
 
 label_coordinates = pd.read_csv(annos_path)
 
+
 def get_world_coords(scan_id):
     return label_coordinates.query('seriesuid == {}'.format(scan_id)).to_numpy()[0, 1:-1][::-1]
+
 
 def worldToVoxelCoord(worldCoord, origin, spacing):
     stretchedVoxelCoord = np.absolute(worldCoord - origin)
@@ -16,15 +18,17 @@ def worldToVoxelCoord(worldCoord, origin, spacing):
     return voxelCoord
 
 
-
-def get_vox_coords(scan_id, mode='miskry'):
+def get_vox_coords(scan_id, mode='miskry', label_shift=None):
+    if label_shift is None:
+        label_shift = [0, 60, 0]
     mhd_file = opjoin(src_path, '{}.mhd'.format(scan_id))
     scan, spacing, orientation, origin, _ = load_mhd(mhd_file)
     world_coords = get_world_coords(scan_id)
     if mode == 'mirsky':
-        return world2vox(world_coords, spacing, orientation, origin) + [0, 20, 0]
+        return world2vox(world_coords, spacing, orientation, origin) + label_shift
     else:
         return worldToVoxelCoord(world_coords, origin, spacing)
+
 
 class InjectCoordinatesResolver:
     def __init__(self):
