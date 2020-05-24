@@ -13,6 +13,10 @@ def get_aug_service(mode, scan_paths, generator_path, save_dir):
         return NpAugmentationService(scan_paths, generator_path, save_dir)
 
 
+def get_scan_id(path2scan):
+    return path2scan[-7:-4]
+
+
 class AugmentationService:
     '''
 
@@ -23,10 +27,10 @@ class AugmentationService:
         self.save_dir = save_dir
         self.is_vox = None
         self.inject_coords_resolver = self.get_coordinates_resolver()
+        scan_paths = [path2scan for path2scan in scan_paths if has_nodule(get_scan_id(path2scan))]
         inject_coords = [self.inject_coords_resolver.resolve(path2scan) for path2scan in scan_paths]
         self.instances = [Instance(scan_path, inject_coord) for scan_path, inject_coord in
                           zip(scan_paths, inject_coords)]
-        self.instances = list(filter(has_nodule, self.instances))
 
     def load_generator(self):
         self.injector = self.get_injector()
