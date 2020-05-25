@@ -91,12 +91,9 @@ class MhdScanManipulator(scan_manipulator):
         if action == 'inject':
             mal_cube_eq = x_mal * ((self.norm_inj[2] - self.norm_inj[1])) + self.norm_inj[0]
             mal_cube = self.eq_inj.dequalize(mal_cube_eq)
-        else:
-            mal_cube_eq = x_mal * ((self.norm_rem[2] - self.norm_rem[1])) + self.norm_rem[0]
-            mal_cube = self.eq_rem.dequalize(mal_cube_eq)
         # Correct for pixel norm error
         # fix overflow
-        bad = np.where(mal_cube > 2000)
+        bad = np.where(mal_cube > 1000)
         # mal_cube[bad] = np.median(clean_cube)
         for i in range(len(bad[0])):
             neiborhood = cutCube(mal_cube, np.array([bad[0][i], bad[1][i], bad[2][i]]),
