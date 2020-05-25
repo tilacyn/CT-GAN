@@ -152,7 +152,7 @@ class MhdScanManipulator(scan_manipulator):
             final_cube_s = (mal_cube_ext + minv) * k + (ben_cube_ext + minv) * (1 - k) - minv
 
         # make it not so bright
-        final_cube_s = self.reduce_brightness(self.scan, final_cube_s)
+        # final_cube_s = self.reduce_brightness(self.scan, final_cube_s)
         self.scan = pasteCube(self.scan, final_cube_s, coord)
         print('touch-ups complete')
 
