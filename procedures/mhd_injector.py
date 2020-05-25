@@ -86,7 +86,7 @@ class MhdScanManipulator(scan_manipulator):
 
         ### De-Norm/De-equalize
         print("De-normalizing sample")
-        thr = 0.25
+        thr = 0.3
         x_mal[x_mal > thr] = thr  # fix boundry overflow
         x_mal[x_mal < -thr] = -thr
         mal_cube_eq = x_mal * ((self.norm_inj[2] - self.norm_inj[1])) + self.norm_inj[0]
