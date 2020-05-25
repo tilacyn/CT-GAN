@@ -94,7 +94,7 @@ class MhdScanManipulator(scan_manipulator):
         # Correct for pixel norm error
         # fix overflow
         print('max mal cube ', np.max(mal_cube))
-        bad = np.where(mal_cube > 1000)
+        bad = np.where(mal_cube > 500)
         # mal_cube[bad] = np.median(clean_cube)
         for i in range(len(bad[0])):
             neiborhood = cutCube(mal_cube, np.array([bad[0][i], bad[1][i], bad[2][i]]),
