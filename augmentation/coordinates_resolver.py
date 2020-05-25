@@ -22,15 +22,13 @@ def worldToVoxelCoord(worldCoord, origin, spacing):
     return voxelCoord
 
 
-def get_vox_coords(scan_id, label_shift=None):
-    if label_shift is None:
-        label_shift = [0, 0, 0]
+def get_vox_coords(scan_id):
     mhd_file = opjoin(src_path, '{}.mhd'.format(scan_id))
     scan, spacing, orientation, origin, _ = load_mhd(mhd_file)
     world_coords = get_world_coords(scan_id)
     print(world_coords)
-    vox_coords = world2vox(world_coords, spacing, orientation, origin)
-    return  np.add(label_shift, vox_coords)
+    vox_coords = [world2vox(coord, spacing, orientation, origin) for coord in world_coords]
+    return  np.array(vox_coords)
 
 
 
