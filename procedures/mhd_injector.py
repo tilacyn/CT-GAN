@@ -89,11 +89,11 @@ class MhdScanManipulator(scan_manipulator):
         thr = 0.5
         x_mal[x_mal > thr] = thr  # fix boundry overflow
         x_mal[x_mal < -thr] = -thr
-        if action == 'inject':
-            mal_cube_eq = x_mal * ((self.norm_inj[2] - self.norm_inj[1])) + self.norm_inj[0]
-            mal_cube = self.eq_inj.dequalize(mal_cube_eq)
+        mal_cube_eq = x_mal * ((self.norm_inj[2] - self.norm_inj[1])) + self.norm_inj[0]
+        mal_cube = self.eq_inj.dequalize(mal_cube_eq)
         # Correct for pixel norm error
         # fix overflow
+        print('max mal cube ', np.max(mal_cube))
         bad = np.where(mal_cube > 1000)
         # mal_cube[bad] = np.median(clean_cube)
         for i in range(len(bad[0])):
