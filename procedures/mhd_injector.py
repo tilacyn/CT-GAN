@@ -86,7 +86,7 @@ class MhdScanManipulator(scan_manipulator):
 
         ### De-Norm/De-equalize
         print("De-normalizing sample")
-        thr = 0.3
+        thr = 0.5
         x_mal[x_mal > thr] = thr  # fix boundry overflow
         x_mal[x_mal < -thr] = -thr
         if action == 'inject':
@@ -94,7 +94,7 @@ class MhdScanManipulator(scan_manipulator):
             mal_cube = self.eq_inj.dequalize(mal_cube_eq)
         # Correct for pixel norm error
         # fix overflow
-        bad = np.where(mal_cube > 2000)
+        bad = np.where(mal_cube > 1000)
         # mal_cube[bad] = np.median(clean_cube)
         for i in range(len(bad[0])):
             neiborhood = cutCube(mal_cube, np.array([bad[0][i], bad[1][i], bad[2][i]]),
