@@ -1,8 +1,7 @@
-from procedures.attack_pipeline import *
-from os.path import join as opjoin
 from abc import abstractmethod
+
 from augmentation.coordinates_resolver import NpInjectCoordinatesResolver, MhdInjectCoordinatesResolver, has_nodule
-import pandas as pd
+from procedures.attack_pipeline import *
 from procedures.mhd_injector import MhdScanManipulator
 
 
@@ -41,7 +40,8 @@ class AugmentationService:
             try:
                 self.injector.load_target_scan(instance.path2scan)
                 print(instance.inject_coords)
-                self.injector.tamper(instance.inject_coords, isVox=self.is_vox)
+                for single_coord in instance.inject_coords:
+                    self.injector.tamper(single_coord, isVox=self.is_vox)
                 self.injector.save_tampered_scan(self.save_dir, instance.get_save_filename(), 'npy')
             except:
                 pass
