@@ -4,6 +4,7 @@ import pandas as pd
 from os.path import join as opjoin
 from paths import annos_path, src_path
 from utils.dicom_utils import world2vox, load_mhd
+import os
 
 label_coordinates = pd.read_csv(annos_path)
 
@@ -13,7 +14,8 @@ def get_world_coords(scan_id):
 
 
 def has_nodule(scan_id):
-    return not label_coordinates.query('seriesuid == {}'.format(scan_id)).empty
+    return not label_coordinates.query('seriesuid == {}'.format(scan_id)).empty and \
+           os.path.exists(opjoin(src_path, '{}.mhd'.format(scan_id)))
 
 
 def worldToVoxelCoord(worldCoord, origin, spacing):
@@ -28,8 +30,7 @@ def get_vox_coords(scan_id):
     world_coords = get_world_coords(scan_id)
     print(world_coords)
     vox_coords = [world2vox(coord, spacing, orientation, origin) for coord in world_coords]
-    return  np.array(vox_coords)
-
+    return np.array(vox_coords)
 
 
 class InjectCoordinatesResolver:
