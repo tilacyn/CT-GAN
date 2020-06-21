@@ -38,5 +38,6 @@ class NodulePlot:
                 axs[i, j + 1].imshow(
                     gen_imgs[cnt].reshape((32, 32, 32))[16, :, :])
                 axs[i, j].axis('off')
+                cnt += 1
         fig.savefig(os.path.join(self.save_path, filename))
         plt.close()
