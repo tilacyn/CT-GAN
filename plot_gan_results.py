@@ -29,7 +29,7 @@ class NodulePlot:
         gen_imgs = 0.5 * gen_imgs + 0.5
 
         titles = ['Condition', 'Generated', 'Original']
-        fig, axs = plt.subplots(r, c)
+        fig, axs = plt.subplots(r, c + 1)
         cnt = 0
         for i, title in zip(range(r), titles):
             axs[i, 0].text(0.25, 0.5, title)
