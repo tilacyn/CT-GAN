@@ -70,4 +70,7 @@ class SegmentedDataLoader():
             yield from self.cur_loader.load_batch(batch_size)
 
     def load_data(self, batch_size=1):
+        if self.cur_loader is None:
+            self.cur_loader = DataLoader(os.path.join('data', 'unhealthy_samples_{}.npy'.format(np.random.randint(5))),
+                                         img_res=self.img_res)
         return self.cur_loader.load_data(batch_size)
