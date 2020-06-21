@@ -32,12 +32,12 @@ class NodulePlot:
         fig, axs = plt.subplots(r, c + 1)
         cnt = 0
         for i, title in zip(range(r), titles):
-            axs[i, 0].text(0.25, 0.5, title)
+            axs[i, 0].text(0.35, 0.5, title)
             axs[i, 0].axis('off')
             for j in range(c):
                 axs[i, j + 1].imshow(
                     gen_imgs[cnt].reshape((32, 32, 32))[16, :, :])
-                axs[i, j].axis('off')
+                axs[i, j + 1].axis('off')
                 cnt += 1
         fig.savefig(os.path.join(self.save_path, filename))
         plt.close()
