@@ -31,12 +31,12 @@ class NodulePlot:
         titles = ['Condition', 'Generated', 'Original']
         fig, axs = plt.subplots(r, c)
         cnt = 0
-        for i in range(r):
+        for i, title in zip(range(r), titles):
+            axs[i, 0].text(title)
             for j in range(c):
-                axs[i, j].imshow(
+                axs[i, j + 1].imshow(
                     gen_imgs[cnt].reshape((32, 32, 32))[16, :,
                     :])
-                axs[i, j].set_title(titles[i])
                 axs[i, j].axis('off')
                 cnt += 1
         fig.savefig(os.path.join(self.save_path, filename))
