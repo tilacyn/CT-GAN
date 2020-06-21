@@ -62,6 +62,7 @@ class SegmentedDataLoader():
         self.subset_number = subset_number
         self.data_len = np.load('data/data_len.npy')
         self.img_res = img_res
+        self.cur_loader = None
 
     def load_batch(self, batch_size):
         self.n_batches = int(self.data_len / batch_size)
