@@ -14,7 +14,7 @@ config[
 config['healthy_samples'] = "data/healthy_samples.npy"  # path to pickle dump of processed healthy samples for training.
 config['unhealthy_scans_raw'] = "../ct-data/subset0/"  # path to directory where the unhealthy scans are
 config[
-    'unhealthy_coords'] = "data/unhealthy_coords.csv"  # path to csv where each row indicates where a healthy sample is (format: filename, x, y ,z)
+    'unhealthy_coords'] = "../ct-data/annotations.csv/"  # path to csv where each row indicates where a healthy sample is (format: filename, x, y ,z)
 # config['unhealthy_samples'] = "data/48/unhealthy_samples"  # path to pickle dump of processed healthy samples for training.
 config['unhealthy_samples'] = "data/unhealthy_samples"  # path to pickle dump of processed healthy samples for training.
 
