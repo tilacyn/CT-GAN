@@ -12,7 +12,7 @@ config[
 config[
     'healthy_coords'] = "data/healthy_coords.csv"  # path to csv where each row indicates where a healthy sample is (format: filename, x, y, z). 'fileneame' is the folder containing the dcm files of that scan or the mhd file name, slice is the z axis
 config['healthy_samples'] = "data/healthy_samples.npy"  # path to pickle dump of processed healthy samples for training.
-config['unhealthy_scans_raw'] = "data/unhealthy_scans/"  # path to directory where the unhealthy scans are
+config['unhealthy_scans_raw'] = "ct-data/subset0/"  # path to directory where the unhealthy scans are
 config[
     'unhealthy_coords'] = "data/unhealthy_coords.csv"  # path to csv where each row indicates where a healthy sample is (format: filename, x, y ,z)
 # config['unhealthy_samples'] = "data/48/unhealthy_samples"  # path to pickle dump of processed healthy samples for training.
