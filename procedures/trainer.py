@@ -67,7 +67,8 @@ def get_loss(name):
 
 class Trainer:
     def __init__(self, isInjector=True, savepath='default', d_lr=0.0002, combined_lr=0.00001, modelpath=None,
-                 generator_weight_updates=1, adain=False, wgan=False, dropout=True, combined_loss=None):
+                 generator_weight_updates=1, adain=False, wgan=False, dropout=True, combined_loss=None, load_weights=False):
+        self.load_weights = load_weights
         self.combined_loss = ['wasserstein', 'mse'] if combined_loss is None else combined_loss
 
         self.generator_weight_updates = generator_weight_updates
@@ -315,6 +316,9 @@ class Trainer:
         return Model([img_A, img_B], validity)
 
     def train(self, epochs, batch_size=1, sample_interval=50):
+        if self.load_weights:
+            self.generator.load_weights(os.path.join(self.modelpath, "G_model.h5"))
+            self.discriminator.load_weights(os.path.join(self.modelpath, "D_model.h5"))
         start_time = datetime.datetime.now()
         # Adversarial loss ground truths
         # valid = np.ones((batch_size,) + self.disc_patch)
